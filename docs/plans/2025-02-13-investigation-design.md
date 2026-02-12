@@ -42,19 +42,113 @@
 
 ## 技术架构
 
-### 技术栈
-**前端**：微信小程序原生框架（WXML + WXSS + JavaScript/TypeScript）
+### 工程结构
+本项目采用**三个独立工程**的架构：
 
-**后端**：Python + FastAPI/Django
-- 部署在腾讯云（云服务器CVM + 腾讯云容器服务TKE）
+```
+investigation-todo/
+├── investigation-miniprogram/    # 微信小程序端
+├── investigation-admin/          # 后台管理PC端
+└── investigation-backend/        # 后端服务（API）
+```
 
+### 1. 微信小程序端（investigation-miniprogram）
+**技术栈**：
+- 框架：微信小程序原生框架（WXML + WXSS + TypeScript）
+- UI组件：WeUI / Vant Weapp
+- 状态管理：小程序原生 globalData 或 MobX
+- 网络请求：wx.request 封装
+
+**核心职责**：
+- C端用户任务管理
+- 习惯打卡、倒数日、番茄钟
+- 数据统计展示
+- 微信订阅消息处理
+- 小组件展示
+
+**部署**：
+- 微信小程序平台
+- 无需服务器部署
+
+### 2. 后台管理PC端（investigation-admin）
+**技术栈**：
+- 框架：Vue 3 + TypeScript
+- UI组件：Element Plus / Ant Design Vue
+- 状态管理：Pinia
+- 路由：Vue Router
+- 构建工具：Vite
+
+**核心职责**：
+- 用户管理（查看、封禁、解封）
+- 数据统计看板
+- 系统配置管理
+- 内容审核
+- 操作日志审计
+
+**部署**：
+- 腾讯云COS（静态托管）
+- CDN加速
+
+### 3. 后端服务（investigation-backend）
+**技术栈**：
+- 框架：FastAPI（Python 3.11+）
+- ORM：SQLAlchemy 2.0
+- 数据库迁移：Alembic
+- 任务队列：Celery + Redis
+- 缓存：Redis
+- 验证：Pydantic v2
+
+**核心职责**：
+- RESTful API提供
+- 微信小程序登录授权
+- 业务逻辑处理
+- 定时任务调度（提醒发送）
+- 数据统计分析
+- 文件上传（COS集成）
+
+**部署**：
+- 腾讯云CVM / TKE（容器化部署）
+- Nginx反向代理
+- Gunicorn + Uvicorn workers
+
+### 4. 共享基础设施
 **数据库**：
-- PostgreSQL（关系型数据，JSON字段支持灵活扩展）
-- 腾讯云Redis（缓存/定时任务队列）
+- PostgreSQL 15+（关系型数据，JSON字段支持灵活扩展）
+- 连接池：SQLAlchemy连接池
 
-**非结构化存储**：腾讯云COS（对象存储，用于附件、图片等文件）
+**缓存**：
+- 腾讯云Redis（缓存/定时任务队列/会话存储）
 
-**消息推送**：微信小程序订阅消息能力
+**对象存储**：
+- 腾讯云COS（附件、图片等文件存储）
+- STS临时密钥上传
+
+**消息推送**：
+- 微信小程序订阅消息能力
+
+### 5. 工程间通信
+```
+微信小程序 <---> 后端API (RESTful/HTTPS)
+后台管理PC <---> 后端API (RESTful/HTTPS)
+后端API <---> PostgreSQL/Redis/COS
+```
+
+### 6. 技术选型理由
+**微信小程序原生框架**：
+- 更好的性能和用户体验
+- 完整的微信能力支持（订阅消息、语音识别等）
+- 避免uni-app等跨平台框架的兼容性问题
+
+**Vue 3 + Element Plus**：
+- 现代化、易用的后台管理方案
+- 丰富的组件库
+- 优秀的TypeScript支持
+
+**FastAPI**：
+- 高性能异步框架
+- 自动API文档（Swagger/ReDoc）
+- 原生Pydantic数据验证
+- 优秀的Python 3.11+异步特性支持
 
 ---
 
