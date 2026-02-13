@@ -1,3 +1,40 @@
+<!-- pages/habits/habits.wxml -->
 <view class="page">
-  <text>习惯打卡页面 - 待实现</text>
+  <!-- 本月统计 -->
+  <view class="stats-card card">
+    <view class="stats-title">本月习惯</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <view class="stat-number">{{monthlyStats.total}}</view>
+        <view class="stat-label">总习惯</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{monthlyStats.completed}}</view>
+        <view class="stat-label">已完成</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{monthlyStats.streak}}</view>
+        <view class="stat-label">当前连续</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 习惯列表 -->
+  <view class="habit-list">
+    <view class="habit-item" wx:for="{{habits}}" wx:key="id" bindtap="onHabitDetail" data-id="{{item.id}}">
+      <view class="habit-icon">{{item.icon}}</view>
+      <view class="habit-content">
+        <view class="habit-name">{{item.name}}</view>
+        <view class="habit-streak">已连续 <text>{{item.streak}}</text> 天</view>
+      </view>
+      <view class="checkin-btn {{item.completed ? 'checked' : ''}}" catchtap="onCheckIn" data-id="{{item.id}}">
+        {{item.completed ? '已打卡' : '打卡'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab" bindtap="onCreateHabit">
+    <text class="fab-icon">+</text>
+  </view>
 </view>
