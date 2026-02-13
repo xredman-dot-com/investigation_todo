@@ -57,6 +57,10 @@ storage/
 logs/
 *.log
 
+# Git worktrees
+.worktrees/
+worktrees/
+
 # Misc
 .cache/
 .temp/
