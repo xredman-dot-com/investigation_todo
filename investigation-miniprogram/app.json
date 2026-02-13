@@ -1,21 +1,54 @@
 {
   "pages": [
-    "pages/dashboard/index",
     "pages/tasks/list/list",
-    "pages/tasks/detail/detail",
-    "pages/views/timeline/timeline",
-    "pages/views/eisenhower/eisenhower",
-    "pages/filters/index",
-    "pages/habits/index",
-    "pages/pomodoro/index",
-    "pages/statistics/index",
-    "pages/settings/index"
+    "pages/calendar/calendar",
+    "pages/pomodoro/pomodoro",
+    "pages/habits/habits",
+    "pages/settings/settings"
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F1E9",
+    "navigationBarBackgroundColor": "#3B82F6",
     "navigationBarTitleText": "格物清单",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#6B7280",
+    "selectedColor": "#3B82F6",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/tasks/list/list",
+        "text": "任务",
+        "iconPath": "assets/icons/tab-task.png",
+        "selectedIconPath": "assets/icons/tab-task-active.png"
+      },
+      {
+        "pagePath": "pages/calendar/calendar",
+        "text": "日历",
+        "iconPath": "assets/icons/tab-calendar.png",
+        "selectedIconPath": "assets/icons/tab-calendar-active.png"
+      },
+      {
+        "pagePath": "pages/pomodoro/pomodoro",
+        "text": "专注",
+        "iconPath": "assets/icons/tab-pomodoro.png",
+        "selectedIconPath": "assets/icons/tab-pomodoro-active.png"
+      },
+      {
+        "pagePath": "pages/habits/habits",
+        "text": "习惯",
+        "iconPath": "assets/icons/tab-habit.png",
+        "selectedIconPath": "assets/icons/tab-habit-active.png"
+      },
+      {
+        "pagePath": "pages/settings/settings",
+        "text": "我的",
+        "iconPath": "assets/icons/tab-me.png",
+        "selectedIconPath": "assets/icons/tab-me-active.png"
+      }
+    ]
   },
   "usingComponents": {
     "task-card": "/components/task-card/task-card",
