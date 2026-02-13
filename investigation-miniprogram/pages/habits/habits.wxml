@@ -37,4 +37,7 @@
   <view class="fab" bindtap="onCreateHabit">
     <text class="fab-icon">+</text>
   </view>
+
+  <!-- 习惯创建弹窗 -->
+  <habit-create visible="{{showHabitCreate}}" bind:confirm="onHabitConfirm" bind:cancel="onHabitCancel" />
 </view>

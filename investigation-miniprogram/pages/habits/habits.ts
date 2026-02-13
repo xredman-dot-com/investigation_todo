@@ -6,7 +6,8 @@ Page({
       total: 0,
       completed: 0,
       streak: 0
-    }
+    },
+    showHabitCreate: false
   },
 
   onLoad() {
@@ -61,8 +62,39 @@ Page({
   },
 
   onCreateHabit() {
-    // TODO: Open habit creation modal
-    wx.showToast({ title: '创建习惯功能开发中', icon: 'none' })
+    this.setData({ showHabitCreate: true })
+  },
+
+  onHabitConfirm(e: WechatMiniprogram.CustomEvent) {
+    const { habit } = e.detail
+    const newHabit = {
+      id: Date.now(),
+      name: habit.name,
+      icon: habit.icon,
+      streak: 0,
+      completed: false
+    }
+
+    const habits = [...this.data.habits, newHabit]
+    const completedCount = habits.filter((h: any) => h.completed).length
+    const maxStreak = Math.max(...habits.map((h: any) => h.streak), 0)
+
+    this.setData({
+      habits,
+      monthlyStats: {
+        total: habits.length,
+        completed: completedCount,
+        streak: maxStreak
+      },
+      showHabitCreate: false
+    })
+
+    // TODO: Save to backend
+    wx.showToast({ title: '创建成功！', icon: 'success' })
+  },
+
+  onHabitCancel() {
+    this.setData({ showHabitCreate: false })
   },
 
   onHabitDetail(e: WechatMiniprogram.CustomEvent) {

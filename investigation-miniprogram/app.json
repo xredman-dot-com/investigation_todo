@@ -54,7 +54,8 @@
   },
   "usingComponents": {
     "task-card": "/components/task-card/task-card",
-    "quick-add": "/components/quick-add/quick-add"
+    "quick-add": "/components/quick-add/quick-add",
+    "habit-create": "/components/habit-create/habit-create"
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2"
