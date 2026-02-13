@@ -6,6 +6,7 @@
     "pages/calendar/calendar",
     "pages/pomodoro/pomodoro",
     "pages/habits/habits",
+    "pages/habits/detail/detail",
     "pages/settings/settings",
     "pages/settings/notification/notification",
     "pages/settings/pomodoro/pomodoro",

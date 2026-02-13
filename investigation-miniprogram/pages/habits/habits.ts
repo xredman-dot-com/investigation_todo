@@ -99,7 +99,8 @@ Page({
 
   onHabitDetail(e: WechatMiniprogram.CustomEvent) {
     const { id } = e.currentTarget.dataset
-    console.log('View habit detail:', id)
-    // TODO: Navigate to habit detail page
+    wx.navigateTo({
+      url: `/pages/habits/detail/detail?id=${id}`
+    })
   }
 })
