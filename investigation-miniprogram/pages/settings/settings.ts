@@ -62,8 +62,17 @@ Page({
     })
   },
 
-  onSetting() {
-    wx.showToast({ title: '设置功能开发中', icon: 'none' })
+  onSetting(e: WechatMiniprogram.CustomEvent) {
+    const { index } = e.currentTarget.dataset
+    const pages = [
+      '/pages/settings/notification/notification',
+      '/pages/settings/pomodoro/pomodoro',
+      '/pages/settings/calendar/calendar'
+    ]
+
+    if (pages[index]) {
+      wx.navigateTo({ url: pages[index] })
+    }
   },
 
   onBackup() {

@@ -6,7 +6,10 @@
     "pages/calendar/calendar",
     "pages/pomodoro/pomodoro",
     "pages/habits/habits",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/settings/notification/notification",
+    "pages/settings/pomodoro/pomodoro",
+    "pages/settings/calendar/calendar"
   ],
   "window": {
     "backgroundTextStyle": "light",
