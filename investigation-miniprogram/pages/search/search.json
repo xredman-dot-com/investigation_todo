@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "搜索",
-  "usingComponents": {
-    "task-card": "/components/task-card/task-card"
-  }
-}

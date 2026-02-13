@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "时间线",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "status-banner": "/shared/components/status-banner/status-banner"
+  }
+}

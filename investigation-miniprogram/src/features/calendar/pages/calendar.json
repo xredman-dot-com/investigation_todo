@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "日历",
+  "usingComponents": {
+    "status-banner": "/shared/components/status-banner/status-banner"
+  }
+}

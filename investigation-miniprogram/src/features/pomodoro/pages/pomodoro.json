@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "番茄钟",
+  "usingComponents": {
+    "task-selector": "/features/pomodoro/components/task-selector/task-selector"
+  }
+}

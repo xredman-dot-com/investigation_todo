@@ -1,0 +1,81 @@
+page {
+  --color-bg: #0e0e0f;
+  --color-surface: #1a1b1d;
+  --color-surface-strong: #222326;
+  --color-text: #f4f4f5;
+  --color-text-muted: #9ca3af;
+  --color-accent: #ff9d2b;
+  --color-accent-strong: #ff7a18;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-success: #2cb67d;
+  --color-warning: #f4b350;
+  --color-danger: #ff5c5c;
+  --color-focus: rgba(255, 157, 43, 0.35);
+  --shadow-soft: 0 20rpx 40rpx rgba(0, 0, 0, 0.35);
+  --shadow-fab: 0 18rpx 40rpx rgba(255, 157, 43, 0.35);
+
+  --primary-color: var(--color-accent);
+  --background-color: var(--color-bg);
+  --surface-color: var(--color-surface);
+  --text-color: var(--color-text);
+  --text-secondary: var(--color-text-muted);
+  --border-color: var(--color-border);
+  --success-color: var(--color-success);
+  --warning-color: var(--color-warning);
+  --danger-color: var(--color-danger);
+  --priority-1: #ff5c5c;
+  --priority-2: #f4b350;
+  --priority-3: #6aa3ff;
+  --priority-4: #8c93a3;
+}
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.surface {
+  background: var(--color-surface);
+  border: 1rpx solid var(--color-border);
+  border-radius: 20rpx;
+}
+
+.surface-strong {
+  background: var(--color-surface-strong);
+  border: 1rpx solid var(--color-border);
+  border-radius: 22rpx;
+}
+
+.divider {
+  height: 1rpx;
+  background: var(--color-border);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.badge {
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 157, 43, 0.18);
+  color: var(--color-accent);
+  font-size: 22rpx;
+}
+
+.priority-1 {
+  background-color: var(--priority-1);
+}
+
+.priority-2 {
+  background-color: var(--priority-2);
+}
+
+.priority-3 {
+  background-color: var(--priority-3);
+}
+
+.priority-4 {
+  background-color: var(--priority-4);
+}

@@ -1,0 +1,31 @@
+<view class="container">
+  <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchTimeline" />
+  <status-banner message="正在加载时间线..." wx:if="{{isLoading}}" />
+  <view class="section card">
+    <view class="title">时间范围</view>
+    <view class="row" style="margin-top: 12rpx;">
+      <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+        <view class="input">开始：{{startDate}}</view>
+      </picker>
+      <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
+        <view class="input">结束：{{endDate}}</view>
+      </picker>
+    </view>
+    <button class="btn" style="margin-top: 12rpx;" bindtap="fetchTimeline">刷新</button>
+  </view>
+
+  <view class="section card" wx:for="{{buckets}}" wx:key="date">
+    <view class="title">{{item.date}}</view>
+    <view class="list-item" wx:for="{{item.tasks}}" wx:key="id">
+      <view class="row">
+        <view>{{item.title}}</view>
+        <view class="subtitle">{{item.due_time || ''}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{buckets.length === 0 && !isLoading && !errorMessage}}" class="empty-state">
+    <view class="empty-text">暂无时间线任务</view>
+    <view class="empty-hint">调整时间范围或稍后再试</view>
+  </view>
+</view>

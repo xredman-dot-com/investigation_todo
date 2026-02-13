@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "习惯",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "status-banner": "/shared/components/status-banner/status-banner"
+  }
+}

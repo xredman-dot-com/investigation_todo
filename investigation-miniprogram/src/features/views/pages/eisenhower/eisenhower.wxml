@@ -1,0 +1,34 @@
+<view class="container">
+  <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchView" />
+  <status-banner message="正在加载视图..." wx:if="{{isLoading}}" />
+  <view wx:if="{{!view && !isLoading && !errorMessage}}" class="empty-state">
+    <view class="empty-text">暂无四象限数据</view>
+    <view class="empty-hint">稍后刷新或返回任务页添加任务</view>
+  </view>
+  <view class="grid">
+    <view class="card quadrant">
+      <view class="title">Q1 重要且紧急</view>
+      <view class="list-item" wx:for="{{view ? view.q1 : []}}" wx:key="id">
+        <view>{{item.title}}</view>
+      </view>
+    </view>
+    <view class="card quadrant">
+      <view class="title">Q2 重要不紧急</view>
+      <view class="list-item" wx:for="{{view ? view.q2 : []}}" wx:key="id">
+        <view>{{item.title}}</view>
+      </view>
+    </view>
+    <view class="card quadrant">
+      <view class="title">Q3 紧急不重要</view>
+      <view class="list-item" wx:for="{{view ? view.q3 : []}}" wx:key="id">
+        <view>{{item.title}}</view>
+      </view>
+    </view>
+    <view class="card quadrant">
+      <view class="title">Q4 不紧急不重要</view>
+      <view class="list-item" wx:for="{{view ? view.q4 : []}}" wx:key="id">
+        <view>{{item.title}}</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,92 @@
+/* components/task-card/task-card.wxss */
+.task-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  padding: 22rpx;
+  margin-bottom: 18rpx;
+  border-radius: 20rpx;
+  position: relative;
+  overflow: hidden;
+  border: 1rpx solid var(--color-border);
+}
+
+.priority-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6rpx;
+}
+
+.checkbox-wrapper {
+  margin-right: 18rpx;
+  padding: 8rpx;
+}
+
+.checkbox {
+  width: 44rpx;
+  height: 44rpx;
+  border: 2rpx solid var(--color-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.checkbox.checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.checkbox-icon {
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.task-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.task-title {
+  font-size: 30rpx;
+  color: var(--color-text);
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.task-title.completed {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.tag {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+}
+
+.more-btn {
+  margin-left: 16rpx;
+  padding: 8rpx;
+  font-size: 36rpx;
+  color: var(--color-text-muted);
+}

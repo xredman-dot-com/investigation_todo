@@ -50,6 +50,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "3.6.0",
+  "miniprogramRoot": "src/",
   "appid": "wxf8329d5217b26bd2",
   "projectname": "investigation-miniprogram",
   "condition": {},

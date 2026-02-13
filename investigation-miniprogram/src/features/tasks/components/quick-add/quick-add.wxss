@@ -1,0 +1,31 @@
+/* components/quick-add/quick-add.wxss */
+.quick-add {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: var(--color-surface-strong);
+  border-radius: 20rpx;
+  border: 1rpx solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.quick-input {
+  flex: 1;
+  height: 68rpx;
+  font-size: 30rpx;
+  color: var(--color-text);
+}
+
+.quick-placeholder {
+  color: var(--color-text-muted);
+}
+
+.quick-btn {
+  margin-left: 16rpx;
+  padding: 14rpx 24rpx;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-strong));
+  color: #151515;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}

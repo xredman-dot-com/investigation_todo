@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "任务",
+  "usingComponents": {
+    "task-card": "/features/tasks/components/task-card/task-card",
+    "quick-add": "/features/tasks/components/quick-add/quick-add",
+    "status-banner": "/shared/components/status-banner/status-banner"
+  }
+}

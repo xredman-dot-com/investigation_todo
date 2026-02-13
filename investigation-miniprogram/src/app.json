@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "features/tasks/pages/list/list",
+    "features/tasks/pages/detail/detail",
+    "features/tasks/pages/create/create",
+    "features/calendar/pages/calendar",
+    "features/pomodoro/pages/index",
+    "features/habits/pages/index",
+    "features/habits/pages/detail/detail",
+    "features/settings/pages/settings",
+    "features/settings/pages/index",
+    "features/settings/pages/notification/notification",
+    "features/settings/pages/pomodoro/pomodoro",
+    "features/settings/pages/calendar/calendar",
+    "features/search/pages/search"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#111113",
+    "navigationBarTitleText": "格物清单",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#8C8C8F",
+    "selectedColor": "#FF9D2B",
+    "backgroundColor": "#0F1012",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "features/tasks/pages/list/list",
+        "text": "任务",
+        "iconPath": "assets/icons/tab-task.png",
+        "selectedIconPath": "assets/icons/tab-task-active.png"
+      },
+      {
+        "pagePath": "features/calendar/pages/calendar",
+        "text": "日历",
+        "iconPath": "assets/icons/tab-calendar.png",
+        "selectedIconPath": "assets/icons/tab-calendar-active.png"
+      },
+      {
+        "pagePath": "features/pomodoro/pages/index",
+        "text": "专注",
+        "iconPath": "assets/icons/tab-pomodoro.png",
+        "selectedIconPath": "assets/icons/tab-pomodoro-active.png"
+      },
+      {
+        "pagePath": "features/habits/pages/index",
+        "text": "习惯",
+        "iconPath": "assets/icons/tab-habit.png",
+        "selectedIconPath": "assets/icons/tab-habit-active.png"
+      },
+      {
+        "pagePath": "features/settings/pages/settings",
+        "text": "我的",
+        "iconPath": "assets/icons/tab-me.png",
+        "selectedIconPath": "assets/icons/tab-me-active.png"
+      }
+    ]
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

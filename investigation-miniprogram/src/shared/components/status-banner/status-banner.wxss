@@ -1,0 +1,25 @@
+.status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16rpx 24rpx 0;
+  padding: 16rpx 20rpx;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1rpx solid var(--color-border);
+  border-radius: 16rpx;
+  color: var(--color-text);
+  font-size: 24rpx;
+}
+
+.status-banner.error {
+  background: rgba(255, 92, 92, 0.15);
+  color: #ffdada;
+}
+
+.status-action {
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  border: 1rpx solid var(--color-border);
+  color: var(--color-text);
+  font-size: 22rpx;
+}

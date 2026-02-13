@@ -1,0 +1,23 @@
+page {
+  font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 0.4rpx;
+}
+
+.title-lg {
+  font-size: 40rpx;
+  font-weight: 600;
+}
+
+.title-md {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.title-sm {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.text-sm {
+  font-size: 24rpx;
+}

@@ -1,0 +1,31 @@
+<view class="container">
+  <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchStats" />
+  <status-banner message="正在加载统计..." wx:if="{{isLoading}}" />
+  <view class="section card">
+    <view class="title">统计区间</view>
+    <view class="row" style="margin-top: 12rpx;">
+      <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+        <view class="input">开始：{{startDate}}</view>
+      </picker>
+      <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
+        <view class="input">结束：{{endDate}}</view>
+      </picker>
+    </view>
+    <button class="btn" style="margin-top: 12rpx;" bindtap="fetchStats">刷新</button>
+  </view>
+
+  <view class="section card">
+    <view class="title">每日统计</view>
+    <view class="list-item" wx:for="{{stats}}" wx:key="stat_date">
+      <view class="row">
+        <view>{{item.stat_date}}</view>
+        <view class="subtitle">完成 {{item.tasks_completed}} / 创建 {{item.tasks_created}}</view>
+      </view>
+      <view class="subtitle">番茄 {{item.pomodoro_count}} ｜ 习惯 {{item.habits_completed}} ｜ 逾期 {{item.tasks_overdue}}</view>
+    </view>
+    <view wx:if="{{stats.length === 0 && !isLoading && !errorMessage}}" class="empty-state">
+      <view class="empty-text">暂无统计数据</view>
+      <view class="empty-hint">调整时间范围或下拉刷新</view>
+    </view>
+  </view>
+</view>

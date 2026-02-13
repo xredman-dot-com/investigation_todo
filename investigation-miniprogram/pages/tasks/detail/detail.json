@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "任务详情",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "tag-editor": "/components/tag-editor/tag-editor"
-  }
-}

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "搜索",
+  "usingComponents": {
+    "task-card": "/features/tasks/components/task-card/task-card",
+    "status-banner": "/shared/components/status-banner/status-banner"
+  }
+}

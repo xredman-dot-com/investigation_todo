@@ -1,0 +1,4 @@
+<view class="status-banner {{type === 'error' ? 'error' : ''}}" wx:if="{{message}}">
+  <text>{{message}}</text>
+  <view class="status-action" wx:if="{{actionText}}" bindtap="onAction">{{actionText}}</view>
+</view>
