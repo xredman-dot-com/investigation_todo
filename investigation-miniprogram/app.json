@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "pages/dashboard/index",
+    "pages/tasks/list/list",
+    "pages/tasks/detail/detail",
+    "pages/views/timeline/timeline",
+    "pages/views/eisenhower/eisenhower",
+    "pages/filters/index",
+    "pages/habits/index",
+    "pages/pomodoro/index",
+    "pages/statistics/index",
+    "pages/settings/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F1E9",
+    "navigationBarTitleText": "格物清单",
+    "navigationBarTextStyle": "black"
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

@@ -1,0 +1,13 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.quadrant {
+  width: calc(50% - 8rpx);
+}
+
+.quadrant .title {
+  font-size: 26rpx;
+}

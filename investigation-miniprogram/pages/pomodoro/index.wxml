@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="section card">
+    <view class="title">开始专注</view>
+    <view class="row" style="margin-top: 12rpx;">
+      <input class="input" type="number" value="{{duration}}" data-field="duration" bindinput="onInputChange" />
+      <view class="subtitle">分钟</view>
+      <input class="input" type="number" value="{{breakDuration}}" data-field="breakDuration" bindinput="onInputChange" />
+      <view class="subtitle">休息</view>
+    </view>
+    <view class="row" style="margin-top: 12rpx;">
+      <button class="btn" bindtap="startSession">开始</button>
+      <button class="btn--ghost" bindtap="completeSession">完成</button>
+    </view>
+  </view>
+
+  <view class="section card">
+    <view class="title">记录</view>
+    <view class="list-item" wx:for="{{sessions}}" wx:key="id">
+      <view class="row">
+        <view>{{item.type}} / {{item.duration}}分钟</view>
+        <view class="subtitle">{{item.status}}</view>
+      </view>
+    </view>
+  </view>
+</view>

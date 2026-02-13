@@ -1,0 +1,45 @@
+<view class="container">
+  <view class="section card">
+    <view class="title">新建筛选器</view>
+    <input class="input" style="margin-top: 12rpx;" placeholder="名称" value="{{form.name}}" data-field="name" bindinput="onInputChange" />
+    <input class="input" style="margin-top: 12rpx;" placeholder="标签" value="{{form.tag}}" data-field="tag" bindinput="onInputChange" />
+    <view class="row" style="margin-top: 12rpx;">
+      <input class="input" placeholder="优先级" type="number" value="{{form.priority}}" data-field="priority" bindinput="onInputChange" />
+      <picker mode="selector" range="{{statusOptions}}" range-key="label" value="{{form.statusIndex}}" bindchange="onStatusChange">
+        <view class="input">状态：{{statusOptions[form.statusIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="row" style="margin-top: 12rpx;">
+      <view class="subtitle">仅有日期</view>
+      <switch checked="{{form.hasDueDate}}" bindchange="onDueSwitch" />
+    </view>
+    <button class="btn" style="margin-top: 12rpx;" bindtap="createFilter">保存筛选器</button>
+  </view>
+
+  <view class="section card">
+    <view class="title">筛选器列表</view>
+    <view class="list-item" wx:for="{{filters}}" wx:key="id">
+      <view class="row">
+        <view>
+          <view>{{item.name}}</view>
+          <view class="subtitle">{{item.criteria.tag || ''}} P{{item.criteria.priority || ''}}</view>
+        </view>
+        <view>
+          <button size="mini" class="btn--ghost" data-id="{{item.id}}" bindtap="applyFilter">应用</button>
+          <button size="mini" class="btn--ghost" data-id="{{item.id}}" bindtap="removeFilter">删除</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section card">
+    <view class="title">筛选结果</view>
+    <view class="list-item" wx:for="{{selectedTasks}}" wx:key="id">
+      <view class="row">
+        <view>{{item.title}}</view>
+        <view class="subtitle">{{item.due_date || ''}}</view>
+      </view>
+    </view>
+    <view wx:if="{{selectedTasks.length === 0}}" class="subtitle">暂无结果</view>
+  </view>
+</view>

@@ -1,0 +1,43 @@
+<view class="container">
+  <view class="section card">
+    <view class="title">任务筛选</view>
+    <view class="row" style="margin-top: 12rpx;">
+      <picker mode="selector" range="{{lists}}" range-key="name" value="{{listIndex}}" bindchange="onListChange">
+        <view class="input">清单：{{lists[listIndex] ? lists[listIndex].name : '全部'}}</view>
+      </picker>
+      <picker mode="selector" range="{{viewOptions}}" range-key="label" value="{{viewIndex}}" bindchange="onViewChange">
+        <view class="input">视图：{{viewOptions[viewIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="row" style="margin-top: 12rpx;">
+      <picker mode="selector" range="{{statusOptions}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+        <view class="input">状态：{{statusOptions[statusIndex].label}}</view>
+      </picker>
+      <input class="input" placeholder="搜索任务" value="{{searchQuery}}" bindinput="onSearchInput" confirm-type="search" bindconfirm="onSearchConfirm" />
+    </view>
+    <view style="margin-top: 12rpx;">
+      <button class="btn" bindtap="goToCreate">新建任务</button>
+    </view>
+  </view>
+
+  <view class="section card">
+    <view class="title">任务列表</view>
+    <view class="list-item" wx:for="{{tasks}}" wx:key="id">
+      <view class="row">
+        <view>
+          <view>{{item.title}}</view>
+          <view class="subtitle">{{item.due_date || ''}} {{item.due_time || ''}}</view>
+          <view class="row" style="margin-top: 8rpx;">
+            <view class="tag">P{{item.priority}}</view>
+            <view class="tag" wx:for="{{item.tags || []}}" wx:key="*this">#{{item}}</view>
+          </view>
+        </view>
+        <view>
+          <switch checked="{{item.status === 'done'}}" data-id="{{item.id}}" bindchange="toggleTask" />
+          <button size="mini" class="btn--ghost" data-id="{{item.id}}" bindtap="goToDetail">详情</button>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{tasks.length === 0}}" class="subtitle">暂无任务</view>
+  </view>
+</view>

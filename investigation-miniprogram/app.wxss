@@ -1,0 +1,96 @@
+page {
+  background-color: #f6f1e9;
+  color: #2b2b2b;
+  font-family: "ZCOOL XiaoWei", "STSong", serif;
+}
+
+:root {
+  --color-primary: #2f8f7b;
+  --color-accent: #f4b350;
+  --color-bg: #f6f1e9;
+  --color-card: #fff7ea;
+  --color-text: #2b2b2b;
+  --color-muted: #6f6a63;
+  --color-border: #e4dccc;
+}
+
+.container {
+  padding: 24rpx;
+}
+
+.section {
+  margin-bottom: 24rpx;
+}
+
+.card {
+  background: var(--color-card);
+  border: 2rpx solid var(--color-border);
+  border-radius: 20rpx;
+  padding: 20rpx;
+  box-shadow: 0 12rpx 24rpx rgba(60, 45, 20, 0.08);
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 26rpx;
+  color: var(--color-muted);
+}
+
+.btn {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 16rpx 24rpx;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border: 2rpx solid var(--color-primary);
+}
+
+.badge {
+  display: inline-block;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(47, 143, 123, 0.12);
+  color: var(--color-primary);
+  font-size: 22rpx;
+}
+
+.list-item {
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.input {
+  background: #fff;
+  border: 2rpx solid var(--color-border);
+  border-radius: 14rpx;
+  padding: 12rpx 16rpx;
+  font-size: 26rpx;
+}
+
+.tag {
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  background: rgba(244, 179, 80, 0.18);
+  color: #a8681c;
+  font-size: 22rpx;
+}

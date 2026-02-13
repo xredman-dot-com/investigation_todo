@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="section card">
+    <view class="title">时间范围</view>
+    <view class="row" style="margin-top: 12rpx;">
+      <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+        <view class="input">开始：{{startDate}}</view>
+      </picker>
+      <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
+        <view class="input">结束：{{endDate}}</view>
+      </picker>
+    </view>
+    <button class="btn" style="margin-top: 12rpx;" bindtap="fetchTimeline">刷新</button>
+  </view>
+
+  <view class="section card" wx:for="{{buckets}}" wx:key="date">
+    <view class="title">{{item.date}}</view>
+    <view class="list-item" wx:for="{{item.tasks}}" wx:key="id">
+      <view class="row">
+        <view>{{item.title}}</view>
+        <view class="subtitle">{{item.due_time || ''}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{buckets.length === 0}}" class="subtitle">暂无时间线任务</view>
+</view>

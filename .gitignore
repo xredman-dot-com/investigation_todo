@@ -3,6 +3,18 @@ node_modules/
 .pnp/
 .pnp.js
 
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
 # Build outputs
 dist/
 dist-ssr/
@@ -38,7 +50,15 @@ lerna-debug.log*
 coverage/
 .nyc_output/
 
+# Storage
+storage/
+
+# Logs
+logs/
+*.log
+
 # Misc
 .cache/
 .temp/
 .tmp/
+*.lock
