@@ -1,3 +1,68 @@
+<!-- pages/pomodoro/pomodoro.wxml -->
 <view class="page">
-  <text>番茄钟页面 - 待实现</text>
+  <!-- 顶部计时器 -->
+  <view class="timer-card card">
+    <view class="timer-display">
+      <view class="time">{{formatTime}}</view>
+      <view class="status">{{timerStatus}}</view>
+    </view>
+
+    <!-- 当前任务 -->
+    <view class="current-task" wx:if="{{currentTask}}">
+      <view class="task-label">专注任务</view>
+      <view class="task-title">{{currentTask.title}}</view>
+    </view>
+
+    <!-- 计时器控制 -->
+    <view class="timer-controls">
+      <view class="control-btn" bindtap="onToggleTimer">
+        <text class="control-icon">{{timerRunning ? '⏸' : '▶'}}</text>
+        <text class="control-label">{{timerRunning ? '暂停' : '开始'}}</text>
+      </view>
+      <view class="control-btn secondary" bindtap="onReset">
+        <text class="control-icon">↺</text>
+        <text class="control-label">重置</text>
+      </view>
+      <view class="control-btn" bindtap="onSelectTask">
+        <text class="control-icon">📋</text>
+        <text class="control-label">选择任务</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日统计 -->
+  <view class="stats-card card">
+    <view class="stats-title">今日专注</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <view class="stat-value">{{todayStats.completedCount}}</view>
+        <view class="stat-label">已完成</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-value">{{todayStats.totalTime}}分钟</view>
+        <view class="stat-label">专注时长</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-value">{{todayStats.sessions}}</view>
+        <view class="stat-label">番茄钟数</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="history-section card">
+    <view class="section-title">今日记录</view>
+    <view class="session-list" wx:if="{{sessions.length > 0}}">
+      <view class="session-item" wx:for="{{sessions}}" wx:key="id">
+        <view class="session-time">{{item.startTime}}</view>
+        <view class="session-duration">{{item.duration}}分钟</view>
+        <view class="session-task">{{item.taskTitle || '无任务'}}</view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{sessions.length === 0}}">
+      <text class="empty-icon">🍅</text>
+      <text class="empty-text">暂无今日记录</text>
+      <text class="empty-hint">开始专注吧</text>
+    </view>
+  </view>
 </view>
