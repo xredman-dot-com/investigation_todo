@@ -1,8 +1,8 @@
-import { exportFull } from "../../api/exports"
-import { listLists, createList, updateList, deleteList } from "../../api/lists"
-import { dispatchReminders, listReminderLogs } from "../../api/reminderJobs"
-import { getMe, UserProfile } from "../../api/users"
-import type { ListItem, SubscriptionMessage } from "../../api/types"
+import { exportFull } from "../../utils/api/exports"
+import { listLists, createList, updateList, deleteList } from "../../utils/api/lists"
+import { dispatchReminders, listReminderLogs } from "../../utils/api/reminderJobs"
+import { getMe, UserProfile } from "../../utils/api/users"
+import type { ListItem, SubscriptionMessage } from "../../utils/api/types"
 
 Page({
   data: {

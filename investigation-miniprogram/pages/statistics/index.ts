@@ -1,5 +1,5 @@
-import { dailyStats } from "../../api/statistics"
-import type { DailyStat } from "../../api/types"
+import { dailyStats } from "../../utils/api/statistics"
+import type { DailyStat } from "../../utils/api/types"
 
 function formatDate(value: Date): string {
   const year = value.getFullYear()

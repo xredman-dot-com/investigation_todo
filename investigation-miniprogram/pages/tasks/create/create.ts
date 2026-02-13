@@ -1,11 +1,7 @@
 // pages/tasks/create/create.ts
-import { createTask, listLists } from '../../../utils/api/tasks'
-
-interface ListItem {
-  id: number
-  name: string
-  icon?: string
-}
+import { createTask } from '../../../utils/api/tasks'
+import { listLists } from '../../../utils/api/lists'
+import type { ListItem } from '../../../utils/api/types'
 
 Page({
   data: {
@@ -14,8 +10,8 @@ Page({
     meaning: '',
     dueDate: '',
     dueTime: '',
-    listId: 0,
-    currentList: { id: 0, name: '收件箱' } as ListItem,
+    listId: '',
+    currentList: { id: '', name: '收件箱' } as ListItem,
     priority: 4,
     priorityLabels: ['高优先级', '中优先级', '低优先级', '无优先级'],
     tags: [] as string[],
@@ -24,15 +20,15 @@ Page({
   },
 
   onLoad(options: Record<string, string>) {
-    const listId = options.listId ? parseInt(options.listId) : 0
+    const listId = options.listId || ''
     this.setData({ listId })
     this.loadLists(listId)
   },
 
-  async loadLists(preselectedListId = 0) {
+  async loadLists(preselectedListId = '') {
     try {
-      const lists = await listLists() as ListItem[]
-      const currentList = lists.find((l) => l.id === preselectedListId) || lists[0] || { id: 0, name: '收件箱' }
+      const lists = await listLists()
+      const currentList = lists.find((l) => l.id === preselectedListId) || lists[0] || { id: '', name: '收件箱', user_id: '', created_at: '', updated_at: '' }
       this.setData({
         lists,
         currentList,

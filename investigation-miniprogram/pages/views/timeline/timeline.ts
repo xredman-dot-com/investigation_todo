@@ -1,5 +1,5 @@
-import { timelineView } from "../../../api/views"
-import type { TimelineBucket } from "../../../api/types"
+import { timelineView } from "../../../utils/api/views"
+import type { TimelineBucket } from "../../../utils/api/types"
 
 function formatDate(value: Date): string {
   const year = value.getFullYear()

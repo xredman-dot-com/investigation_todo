@@ -33,7 +33,6 @@ Page({
     const newTheme = theme as ThemeName
 
     setTheme(newTheme)
-    applyTheme(newTheme)
 
     const app = getApp<IAppOption>()
     app.globalData.theme = getTheme()
@@ -51,7 +50,6 @@ Page({
     const theme: ThemeName = checked ? 'dark' : 'default'
 
     setTheme(theme)
-    applyTheme(theme)
 
     const app = getApp<IAppOption>()
     app.globalData.theme = getTheme()

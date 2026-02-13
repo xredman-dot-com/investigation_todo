@@ -1,6 +1,6 @@
 // pages/tasks/detail/detail.ts
 import { getTask, updateTask, deleteTask } from '../../../utils/api/tasks'
-import { getSubtasks } from '../../../utils/api/subtasks'
+import { listSubtasks } from '../../../utils/api/subtasks'
 import type { TaskItem } from '../../../utils/api/types'
 
 Page({
@@ -30,7 +30,7 @@ Page({
     wx.showLoading({ title: '加载中...' })
     try {
       const task = await getTask(this.data.taskId)
-      const subtasks = await getSubtasks(this.data.taskId)
+      const subtasks = await listSubtasks(this.data.taskId)
 
       const completedSubtasks = subtasks.filter(s => s.is_completed).length
 

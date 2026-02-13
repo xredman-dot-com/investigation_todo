@@ -1,5 +1,5 @@
-import { createPomodoroSession, listPomodoroSessions, updatePomodoroSession } from "../../api/pomodoro"
-import type { PomodoroSession } from "../../api/types"
+import { createPomodoroSession, listPomodoroSessions, updatePomodoroSession } from "../../utils/api/pomodoro"
+import type { PomodoroSession } from "../../utils/api/types"
 
 Page({
   data: {

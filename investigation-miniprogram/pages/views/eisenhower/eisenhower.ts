@@ -1,5 +1,5 @@
-import { eisenhowerView } from "../../../api/views"
-import type { EisenhowerView } from "../../../api/types"
+import { eisenhowerView } from "../../../utils/api/views"
+import type { EisenhowerView } from "../../../utils/api/types"
 
 Page({
   data: {

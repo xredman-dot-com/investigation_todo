@@ -22,6 +22,7 @@ Page({
     this.timerRunning = true
     this.setData({ timerRunning: true })
 
+    // Store interval ID for cleanup
     const interval = setInterval(() => {
       if (this.data.timeRemaining > 0 && this.data.timerRunning) {
         this.setData({ timeRemaining: this.data.timeRemaining - 1 })
@@ -30,9 +31,8 @@ Page({
           this.completeSession()
         }
       }
-    }, 1000)
+    }, 1000);
 
-    // Store interval ID for cleanup
     (this.data as any).timerInterval = interval
   },
 

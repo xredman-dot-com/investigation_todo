@@ -25,13 +25,16 @@ async function wxLogin(): Promise<string> {
 
 export async function login(): Promise<string> {
   let code = ""
-  try {
-    code = await wxLogin()
-  } catch (error) {
-    if (!USE_DEV_LOGIN) {
+
+  // In development mode, always use dev code
+  if (USE_DEV_LOGIN) {
+    code = `dev-${Date.now()}`
+  } else {
+    try {
+      code = await wxLogin()
+    } catch (error) {
       throw error
     }
-    code = `dev-${Date.now()}`
   }
 
   const data = await request<{ access_token: string }>(

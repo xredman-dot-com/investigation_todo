@@ -1,5 +1,6 @@
 // pages/search/search.ts
-import { listTasks, listLists } from '../../../utils/api/tasks'
+import { listTasks } from '../../utils/api/tasks'
+import { listLists } from '../../utils/api/lists'
 
 Page({
   data: {

@@ -4,10 +4,11 @@
     "pages/tasks/detail/detail",
     "pages/tasks/create/create",
     "pages/calendar/calendar",
-    "pages/pomodoro/pomodoro",
-    "pages/habits/habits",
+    "pages/pomodoro/index",
+    "pages/habits/index",
     "pages/habits/detail/detail",
     "pages/settings/settings",
+    "pages/settings/index",
     "pages/settings/notification/notification",
     "pages/settings/pomodoro/pomodoro",
     "pages/settings/calendar/calendar",
@@ -38,13 +39,13 @@
         "selectedIconPath": "assets/icons/tab-calendar-active.png"
       },
       {
-        "pagePath": "pages/pomodoro/pomodoro",
+        "pagePath": "pages/pomodoro/index",
         "text": "专注",
         "iconPath": "assets/icons/tab-pomodoro.png",
         "selectedIconPath": "assets/icons/tab-pomodoro-active.png"
       },
       {
-        "pagePath": "pages/habits/habits",
+        "pagePath": "pages/habits/index",
         "text": "习惯",
         "iconPath": "assets/icons/tab-habit.png",
         "selectedIconPath": "assets/icons/tab-habit-active.png"

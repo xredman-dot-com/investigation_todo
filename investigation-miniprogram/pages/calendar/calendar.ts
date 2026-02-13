@@ -1,6 +1,6 @@
 // pages/calendar/calendar.ts
-import { listTasks } from '../../../utils/api/tasks'
-import type { TaskItem } from '../../../utils/api/types'
+import { listTasks } from '../../utils/api/tasks'
+import type { TaskItem } from '../../utils/api/types'
 
 Page({
   data: {
@@ -91,7 +91,7 @@ Page({
   async loadTasksForDate() {
     const dateStr = this.formatDate(this.data.selectedDate)
     try {
-      const tasks = await listTasks({ due_date: dateStr })
+      const tasks = await listTasks({ due_date_from: dateStr, due_date_to: dateStr })
 
       // Group tasks by date
       const tasksByDate: Record<string, TaskItem[]> = {}

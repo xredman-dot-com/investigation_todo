@@ -23,3 +23,12 @@ admin-build:
 
 miniprogram tool="/Applications/wechatwebdevtools.app":
   open -a "{{tool}}" investigation-miniprogram || open -a "WeChat DevTools" investigation-miniprogram || open -a "Wechat Devtools" investigation-miniprogram || open -a "/Applications/wechatwebdevtools.app" investigation-miniprogram
+
+miniprogram-install:
+  cd investigation-miniprogram && pnpm install
+
+miniprogram-compile:
+  cd investigation-miniprogram && pnpm run compile
+
+miniprogram-watch:
+  cd investigation-miniprogram && pnpm run watch

@@ -1,0 +1,13 @@
+{
+  "name": "investigation-miniprogram",
+  "version": "1.0.0",
+  "description": "格物清单小程序",
+  "scripts": {
+    "compile": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^3.12.2",
+    "typescript": "^5.0.0"
+  }
+}

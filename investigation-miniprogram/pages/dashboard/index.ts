@@ -1,5 +1,5 @@
-import { widgetSummary } from "../../api/widgets"
-import type { WidgetSummary } from "../../api/types"
+import { widgetSummary } from "../../utils/api/widgets"
+import type { WidgetSummary } from "../../utils/api/types"
 
 Page({
   data: {
