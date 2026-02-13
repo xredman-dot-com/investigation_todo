@@ -103,7 +103,7 @@ Page({
     const listId = this.data.currentList.id
     const query = listId ? `?listId=${listId}` : ''
     wx.navigateTo({
-      url: `/pages/tasks/detail/detail${query}&mode=create`
+      url: `/pages/tasks/create/create${query}`
     })
   },
 

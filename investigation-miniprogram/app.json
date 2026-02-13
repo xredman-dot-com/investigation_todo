@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/tasks/list/list",
+    "pages/tasks/detail/detail",
+    "pages/tasks/create/create",
     "pages/calendar/calendar",
     "pages/pomodoro/pomodoro",
     "pages/habits/habits",
