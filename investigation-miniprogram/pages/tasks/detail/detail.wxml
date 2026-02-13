@@ -1,103 +1,107 @@
-<view class="container">
-  <view class="section card">
-    <view class="title">基础信息</view>
-    <picker mode="selector" range="{{lists}}" range-key="name" value="{{listIndex}}" bindchange="onListChange">
-      <view class="input" style="margin-top: 12rpx;">清单：{{lists[listIndex] ? lists[listIndex].name : ''}}</view>
-    </picker>
-    <input class="input" style="margin-top: 12rpx;" placeholder="任务标题" value="{{form.title}}" data-field="title" bindinput="onInputChange" />
-    <textarea class="input" style="margin-top: 12rpx;" placeholder="描述" value="{{form.description}}" data-field="description" bindinput="onInputChange"></textarea>
-    <textarea class="input" style="margin-top: 12rpx;" placeholder="意义（可选）" value="{{form.meaning}}" data-field="meaning" bindinput="onInputChange"></textarea>
-    <input class="input" style="margin-top: 12rpx;" placeholder="标签（逗号分隔）" value="{{form.tagsText}}" data-field="tagsText" bindinput="onInputChange" />
+<!-- pages/tasks/detail/detail.wxml -->
+<view class="page">
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-btn" bindtap="onBack">←</view>
+    <view class="nav-title">任务详情</view>
+    <view class="nav-btn" bindtap="onMore">⋯</view>
   </view>
 
-  <view class="section card">
-    <view class="title">时间与优先级</view>
-    <view class="row" style="margin-top: 12rpx;">
-      <picker mode="date" value="{{form.due_date}}" bindchange="onDateChange">
-        <view class="input">日期：{{form.due_date || '未设置'}}</view>
-      </picker>
-      <picker mode="time" value="{{form.due_time}}" bindchange="onTimeChange">
-        <view class="input">时间：{{form.due_time || '未设置'}}</view>
-      </picker>
+  <scroll-view class="content" scroll-y>
+    <!-- 任务标题 -->
+    <view class="card">
+      <view class="title-row">
+        <view class="checkbox {{task.status === 'done' ? 'checked' : ''}}" bindtap="onToggle">
+          <text wx:if="{{task.status === 'done'}}">✓</text>
+        </view>
+        <input
+          class="task-title-input {{task.status === 'done' ? 'completed' : ''}}"
+          value="{{task.title}}"
+          bindinput="onTitleInput"
+          placeholder="任务标题"
+        />
+      </view>
     </view>
-    <view class="row" style="margin-top: 12rpx;">
-      <picker mode="selector" range="{{priorityOptions}}" value="{{form.priority}}" bindchange="onPriorityChange">
-        <view class="input">优先级：P{{form.priority}}</view>
-      </picker>
-      <picker mode="selector" range="{{eisenhowerOptions}}" value="{{quadrantIndex}}" bindchange="onQuadrantChange">
-        <view class="input">象限：{{form.eisenhower_quadrant || '自动'}}</view>
-      </picker>
-    </view>
-    <view class="row" style="margin-top: 12rpx;">
-      <view class="subtitle">重要</view>
-      <switch checked="{{form.is_important}}" data-field="is_important" bindchange="onSwitchChange" />
-    </view>
-  </view>
 
-  <view class="section card">
-    <view class="title">重复规则</view>
-    <view class="row" style="margin-top: 12rpx;">
-      <picker mode="selector" range="{{repeatOptions}}" range-key="label" value="{{repeatIndex}}" bindchange="onRepeatChange">
-        <view class="input">频率：{{repeatOptions[repeatIndex].label}}</view>
-      </picker>
-      <input class="input" style="width: 180rpx;" type="number" value="{{form.repeat_interval}}" data-field="repeat_interval" bindinput="onInputChange" />
-    </view>
-  </view>
-
-  <view class="section card">
-    <view class="title">子任务</view>
-    <view class="row" style="margin-top: 12rpx;">
-      <input class="input" placeholder="新增子任务" value="{{newSubtaskTitle}}" bindinput="onSubtaskInput" />
-      <button class="btn" bindtap="addSubtask">添加</button>
-    </view>
-    <view class="list-item" wx:for="{{subtasks}}" wx:key="id">
-      <view class="row">
-        <view>{{item.title}}</view>
-        <view>
-          <switch checked="{{item.is_completed}}" data-id="{{item.id}}" bindchange="toggleSubtask" />
-          <button size="mini" class="btn--ghost" data-id="{{item.id}}" bindtap="removeSubtask">删除</button>
+    <!-- 任务属性 -->
+    <view class="card">
+      <view class="field" bindtap="onDateClick">
+        <text class="field-icon">📅</text>
+        <text class="field-label">截止日期</text>
+        <text class="field-value">{{task.due_date || '未设置'}}</text>
+      </view>
+      <view class="field" bindtap="onTimeClick">
+        <text class="field-icon">⏰</text>
+        <text class="field-label">截止时间</text>
+        <text class="field-value">{{task.due_time || '未设置'}}</text>
+      </view>
+      <view class="field" bindtap="onListClick">
+        <text class="field-icon">📋</text>
+        <text class="field-label">清单</text>
+        <text class="field-value">{{task.list_name || '收件箱'}}</text>
+      </view>
+      <view class="field" bindtap="onPriorityClick">
+        <text class="field-icon">⚡</text>
+        <text class="field-label">优先级</text>
+        <text class="field-value priority-{{task.priority}}">{{priorityLabels[task.priority]}}</text>
+      </view>
+      <view class="field" bindtap="onTagsClick">
+        <text class="field-icon">🏷️</text>
+        <text class="field-label">标签</text>
+        <view class="field-value tags">
+          <text wx:if="{{!task.tags || task.tags.length === 0}}">未设置</text>
+          <text class="tag" wx:for="{{task.tags}}" wx:key="*this">#{{item}}</text>
         </view>
       </view>
     </view>
-  </view>
 
-  <view class="section card">
-    <view class="title">附件</view>
-    <button class="btn" bindtap="chooseAttachment">上传图片</button>
-    <view class="list-item" wx:for="{{attachments}}" wx:key="id">
-      <view class="row">
-        <view>{{item.file_name}}</view>
-        <view>
-          <button size="mini" class="btn--ghost" data-url="{{item.cos_url}}" bindtap="previewAttachment">预览</button>
-          <button size="mini" class="btn--ghost" data-id="{{item.id}}" bindtap="removeAttachment">删除</button>
+    <!-- 描述 -->
+    <view class="card">
+      <textarea
+        class="description"
+        placeholder="添加描述..."
+        value="{{task.description}}"
+        bindinput="onDescriptionInput"
+        maxlength="2000"
+      />
+    </view>
+
+    <!-- 意义（特色功能） -->
+    <view class="card special">
+      <view class="card-title">✨ 任务意义</view>
+      <textarea
+        class="meaning-input"
+        placeholder="为什么做这个任务？"
+        value="{{task.meaning}}"
+        bindinput="onMeaningInput"
+        maxlength="500"
+      />
+      <view class="hint">记录任务的意义，帮助你理解"为什么做"</view>
+    </view>
+
+    <!-- 子任务 -->
+    <view class="card" wx:if="{{subtasks.length > 0}}">
+      <view class="card-title">子任务 ({{completedSubtasks}}/{{subtasks.length}})</view>
+      <view class="subtask-list">
+        <view class="subtask" wx:for="{{subtasks}}" wx:key="id">
+          <view class="subtask-checkbox {{item.is_completed ? 'checked' : ''}}" bindtap="onToggleSubtask">
+            <text wx:if="{{item.is_completed}}">✓</text>
+          </view>
+          <text class="subtask-title">{{item.title}}</text>
         </view>
       </view>
     </view>
-  </view>
+  </scroll-view>
 
-  <view class="section card">
-    <view class="title">提醒</view>
-    <view class="subtitle">提前 5/15/60/1440 分钟</view>
-    <checkbox-group bindchange="onOffsetChange" class="row" style="margin-top: 12rpx; flex-wrap: wrap;">
-      <label wx:for="{{reminderOffsets}}" wx:key="value" style="margin-right: 12rpx;">
-        <checkbox value="{{item.value}}" checked="{{item.checked}}" /> {{item.label}}
-      </label>
-    </checkbox-group>
-    <button class="btn" bindtap="createOffsetsReminder" style="margin-top: 12rpx;">创建提醒</button>
-    <view class="list-item" wx:for="{{reminders}}" wx:key="id">
-      <view class="row">
-        <view>{{item.remind_at}}</view>
-        <view>
-          <view class="subtitle">{{item.is_sent ? '已发送' : '待发送'}}</view>
-          <button size="mini" class="btn--ghost" data-id="{{item.id}}" bindtap="snoozeReminder">延后10分钟</button>
-          <button size="mini" class="btn--ghost" data-id="{{item.id}}" bindtap="removeReminder">删除</button>
-        </view>
-      </view>
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bottom-btn" bindtap="onDelete">
+      <text class="btn-icon">🗑️</text>
+      <text>删除</text>
     </view>
-  </view>
-
-  <view class="section">
-    <button class="btn" bindtap="saveTask">保存任务</button>
-    <button class="btn--ghost" style="margin-top: 12rpx;" bindtap="removeTask" wx:if="{{mode === 'edit'}}">删除任务</button>
+    <view class="bottom-btn primary" bindtap="onSave">
+      <text class="btn-icon">💾</text>
+      <text>保存</text>
+    </view>
   </view>
 </view>
