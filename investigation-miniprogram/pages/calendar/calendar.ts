@@ -1,6 +1,6 @@
 // pages/calendar/calendar.ts
-import { listTasks } from '../../../api/tasks'
-import type { TaskItem } from '../../../api/types'
+import { listTasks } from '../../api/tasks'
+import type { TaskItem } from '../../api/types'
 
 Page({
   data: {
