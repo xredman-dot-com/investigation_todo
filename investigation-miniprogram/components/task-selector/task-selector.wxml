@@ -1,0 +1,46 @@
+<!-- components/task-selector/task-selector.wxml -->
+<view class="task-selector-modal {{visible ? 'show' : ''}}" bindtap="onCancel">
+  <view class="modal-content" catchtap="onStopPropagation">
+    <view class="modal-header">
+      <view class="modal-title">选择专注任务</view>
+      <view class="modal-close" bindtap="onCancel">×</view>
+    </view>
+
+    <view class="modal-body">
+      <view class="search-bar">
+        <input class="search-input" value="{{searchText}}" bindinput="onSearchInput" placeholder="搜索任务..." />
+      </view>
+
+      <scroll-view class="task-list" scroll-y enable-back-to-top>
+        <view
+          class="task-item {{selectedTaskId === item.id ? 'selected' : ''}}"
+          wx:for="{{filteredTasks}}"
+          wx:key="id"
+          bindtap="onSelectTask"
+          data-task="{{item}}"
+        >
+          <view class="task-checkbox">
+            <text wx:if="{{selectedTaskId === item.id}}">✓</text>
+          </view>
+          <view class="task-info">
+            <view class="task-title">{{item.title}}</view>
+            <view class="task-meta" wx:if="{{item.list_name}}">
+              <text class="task-list">{{item.list_name}}</text>
+            </view>
+          </view>
+          <view class="priority-dot priority-{{item.priority || 4}}"></view>
+        </view>
+
+        <view class="empty-tasks" wx:if="{{filteredTasks.length === 0}}">
+          <text class="empty-icon">📋</text>
+          <text class="empty-text">暂无任务</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="modal-footer">
+      <view class="modal-btn cancel" bindtap="onCancel">取消</view>
+      <view class="modal-btn confirm" bindtap="onConfirm">确定</view>
+    </view>
+  </view>
+</view>

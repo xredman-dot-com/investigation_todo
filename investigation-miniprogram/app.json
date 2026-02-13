@@ -55,7 +55,8 @@
   "usingComponents": {
     "task-card": "/components/task-card/task-card",
     "quick-add": "/components/quick-add/quick-add",
-    "habit-create": "/components/habit-create/habit-create"
+    "habit-create": "/components/habit-create/habit-create",
+    "task-selector": "/components/task-selector/task-selector"
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2"

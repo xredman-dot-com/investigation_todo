@@ -10,7 +10,8 @@ Page({
       completedCount: 0,
       totalTime: 0,
       sessions: 0
-    }
+    },
+    showTaskSelector: false
   },
 
   onLoad() {
@@ -86,9 +87,20 @@ Page({
     wx.showToast({ title: '专注完成！', icon: 'success' })
   },
 
-  onSelectTask() {
-    // TODO: Open task selector
-    wx.showToast({ title: '选择任务功能开发中', icon: 'none' })
+  onShowTaskSelector() {
+    this.setData({ showTaskSelector: true })
+  },
+
+  onTaskConfirm(e: WechatMiniprogram.CustomEvent) {
+    const { task } = e.detail
+    this.setData({
+      currentTask: task,
+      showTaskSelector: false
+    })
+  },
+
+  onTaskCancel() {
+    this.setData({ showTaskSelector: false })
   },
 
   formatTime(): string {

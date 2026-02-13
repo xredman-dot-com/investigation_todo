@@ -51,6 +51,11 @@
   color: var(--text-color);
 }
 
+.task-title.empty {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
 .timer-controls {
   display: flex;
   gap: 16rpx;

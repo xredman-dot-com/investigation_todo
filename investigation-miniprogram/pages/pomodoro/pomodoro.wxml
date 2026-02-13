@@ -12,6 +12,10 @@
       <view class="task-label">专注任务</view>
       <view class="task-title">{{currentTask.title}}</view>
     </view>
+    <view class="current-task" wx:else>
+      <view class="task-label">专注任务</view>
+      <view class="task-title empty">点击选择任务</view>
+    </view>
 
     <!-- 计时器控制 -->
     <view class="timer-controls">
@@ -23,7 +27,7 @@
         <text class="control-icon">↺</text>
         <text class="control-label">重置</text>
       </view>
-      <view class="control-btn" bindtap="onSelectTask">
+      <view class="control-btn" bindtap="onShowTaskSelector">
         <text class="control-icon">📋</text>
         <text class="control-label">选择任务</text>
       </view>
@@ -65,4 +69,12 @@
       <text class="empty-hint">开始专注吧</text>
     </view>
   </view>
+
+  <!-- 任务选择器 -->
+  <task-selector
+    visible="{{showTaskSelector}}"
+    selectedTaskId="{{currentTask.id}}"
+    bind:confirm="onTaskConfirm"
+    bind:cancel="onTaskCancel"
+  />
 </view>
