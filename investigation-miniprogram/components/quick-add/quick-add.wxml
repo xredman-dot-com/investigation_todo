@@ -1,0 +1,15 @@
+<!-- components/quick-add/quick-add.wxml -->
+<view class="quick-add">
+  <input
+    class="quick-input"
+    placeholder="快速添加任务..."
+    value="{{value}}"
+    bindinput="onInput"
+    bindconfirm="onConfirm"
+    confirm-type="done"
+    placeholder-class="quick-placeholder"
+  />
+  <view class="quick-btn" bindtap="onConfirm">
+    <text>添加</text>
+  </view>
+</view>

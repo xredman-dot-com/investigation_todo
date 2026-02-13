@@ -17,7 +17,10 @@
     "navigationBarTitleText": "格物清单",
     "navigationBarTextStyle": "black"
   },
-  "usingComponents": {},
+  "usingComponents": {
+    "task-card": "/components/task-card/task-card",
+    "quick-add": "/components/quick-add/quick-add"
+  },
   "sitemapLocation": "sitemap.json",
   "style": "v2"
 }

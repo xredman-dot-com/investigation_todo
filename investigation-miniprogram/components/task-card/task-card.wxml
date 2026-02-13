@@ -1,0 +1,36 @@
+<!-- components/task-card/task-card.wxml -->
+<view class="task-card" bindtap="onTap">
+  <!-- 优先级标识条 -->
+  <view class="priority-indicator priority-{{task.priority}}"></view>
+
+  <!-- 左侧 checkbox -->
+  <view class="checkbox-wrapper" catchtap="onToggle">
+    <view class="checkbox {{task.status === 'done' ? 'checked' : ''}}">
+      <view wx:if="{{task.status === 'done'}}" class="checkbox-icon">✓</view>
+    </view>
+  </view>
+
+  <!-- 中间内容区 -->
+  <view class="task-content" bindtap="onDetail">
+    <view class="task-title {{task.status === 'done' ? 'completed' : ''}}">
+      {{task.title}}
+    </view>
+
+    <!-- 元信息 -->
+    <view class="task-meta" wx:if="{{task.due_date || task.tags}}">
+      <view class="meta-item" wx:if="{{task.due_date}}">
+        <text class="icon">📅</text>
+        <text>{{task.due_date}}</text>
+        <text wx:if="{{task.due_time}}">{{task.due_time}}</text>
+      </view>
+      <view class="meta-item tags" wx:if="{{task.tags && task.tags.length}}">
+        <text class="tag" wx:for="{{task.tags}}" wx:key="*this">#{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 右侧更多按钮 -->
+  <view class="more-btn" catchtap="onMore">
+    <text>⋯</text>
+  </view>
+</view>
