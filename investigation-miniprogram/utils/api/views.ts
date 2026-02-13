@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { EisenhowerView, TaskItem, TimelineBucket } from "./types"
 
 type ViewParams = {

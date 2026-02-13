@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { HabitItem, HabitLogItem } from "./types"
 
 export function listHabits(): Promise<HabitItem[]> {

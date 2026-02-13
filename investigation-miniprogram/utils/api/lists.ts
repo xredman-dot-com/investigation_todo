@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { ListItem } from "./types"
 
 export function listLists(): Promise<ListItem[]> {

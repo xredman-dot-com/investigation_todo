@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { PomodoroSession } from "./types"
 
 export function listPomodoroSessions(params?: { start_at?: string; end_at?: string; status_filter?: string; task_id?: string }): Promise<PomodoroSession[]> {

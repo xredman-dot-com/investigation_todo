@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { ReminderItem } from "./types"
 
 export function listReminders(taskId: string): Promise<ReminderItem[]> {

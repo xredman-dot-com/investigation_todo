@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { DailyStat } from "./types"
 
 export function dailyStats(startDate?: string, endDate?: string): Promise<DailyStat[]> {

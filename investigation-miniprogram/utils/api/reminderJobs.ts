@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { ReminderItem, SubscriptionMessage } from "./types"
 
 export function dispatchReminders(as_of?: string): Promise<SubscriptionMessage[]> {

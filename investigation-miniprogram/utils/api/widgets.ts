@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { WidgetSummary } from "./types"
 
 export function widgetSummary(limit?: number): Promise<WidgetSummary> {

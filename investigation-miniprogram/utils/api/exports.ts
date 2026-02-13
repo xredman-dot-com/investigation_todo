@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { ExportPayload } from "./types"
 
 export function exportFull(): Promise<ExportPayload> {

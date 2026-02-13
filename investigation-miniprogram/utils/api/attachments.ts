@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "../utils/config"
 import { getToken } from "../utils/storage"
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { AttachmentItem } from "./types"
 
 export function listAttachments(taskId: string): Promise<AttachmentItem[]> {

@@ -1,4 +1,4 @@
-import { request } from "../utils/request"
+import { request } from "../request"
 import type { FilterCriteria, FilterItem, TaskItem } from "./types"
 
 export function listFilters(): Promise<FilterItem[]> {
