@@ -94,6 +94,10 @@ Page({
     })
   },
 
+  onSearch() {
+    wx.navigateTo({ url: '/pages/search/search' })
+  },
+
   onQuickAdd(e: WechatMiniprogram.CustomEvent) {
     const { title } = e.detail
     this.createTask(title)

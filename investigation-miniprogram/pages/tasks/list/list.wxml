@@ -4,6 +4,9 @@
   <view class="header">
     <view class="menu-btn" bindtap="onMenu">☰</view>
     <quick-add placeholder="添加任务至 {{currentList.name}}" bind:add="onQuickAdd" />
+    <view class="search-btn" bindtap="onSearch">
+      <text class="search-icon">🔍</text>
+    </view>
   </view>
 
   <!-- 清单切换指示器 -->

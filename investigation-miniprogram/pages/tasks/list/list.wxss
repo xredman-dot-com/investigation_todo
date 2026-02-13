@@ -20,6 +20,13 @@
   color: var(--text-color);
 }
 
+.search-btn {
+  padding: 16rpx;
+  font-size: 32rpx;
+  margin-left: 8rpx;
+  color: var(--text-secondary);
+}
+
 .list-indicator {
   display: flex;
   justify-content: space-between;

@@ -10,7 +10,8 @@
     "pages/settings/settings",
     "pages/settings/notification/notification",
     "pages/settings/pomodoro/pomodoro",
-    "pages/settings/calendar/calendar"
+    "pages/settings/calendar/calendar",
+    "pages/search/search"
   ],
   "window": {
     "backgroundTextStyle": "light",
