@@ -10,7 +10,8 @@ Page({
     subtasks: [],
     completedSubtasks: 0,
     priorityLabels: ['无', '低', '中', '高'],
-    changes: {} as Partial<TaskItem>
+    changes: {} as Partial<TaskItem>,
+    showTagEditor: false
   },
 
   async onLoad(options: Record<string, string>) {
@@ -158,8 +159,29 @@ Page({
   },
 
   onTagsClick() {
-    // TODO: 标签编辑器
-    wx.showToast({ title: '标签编辑器开发中', icon: 'none' })
+    this.setData({ showTagEditor: true })
+  },
+
+  onTagConfirm(e: WechatMiniprogram.CustomEvent) {
+    const { tags } = e.detail
+    try {
+      // TODO: Call API to update tags
+      // await updateTask(this.data.taskId, { tags })
+
+      this.setData({
+        'task.tags': tags,
+        showTagEditor: false
+      })
+
+      wx.showToast({ title: '标签已更新', icon: 'success' })
+    } catch (error) {
+      console.error('Failed to update tags:', error)
+      wx.showToast({ title: '更新失败', icon: 'none' })
+    }
+  },
+
+  onTagCancel() {
+    this.setData({ showTagEditor: false })
   },
 
   async onToggleSubtask(e: WechatMiniprogram.TouchEvent) {
