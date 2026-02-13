@@ -1,290 +1,275 @@
-import { listLists } from "../../../api/lists"
-import { createTask, deleteTask, getTask, updateTask } from "../../../api/tasks"
-import { createSubtask, deleteSubtask, listSubtasks, updateSubtask } from "../../../api/subtasks"
-import { listAttachments, uploadAttachment, deleteAttachment } from "../../../api/attachments"
-import { listReminders, createRemindersFromOffsets, deleteReminder } from "../../../api/reminders"
-import { snoozeReminder } from "../../../api/reminderJobs"
-import { REMINDER_OFFSETS } from "../../../utils/config"
-import type { AttachmentItem, ListItem, ReminderItem, SubtaskItem } from "../../../api/types"
-
-const priorityOptions = [0, 1, 2, 3, 4]
-const eisenhowerOptions = ["", "Q1", "Q2", "Q3", "Q4"]
-const repeatOptions = [
-  { label: "不重复", value: "" },
-  { label: "每天", value: "daily" },
-  { label: "每周", value: "weekly" },
-  { label: "每月", value: "monthly" },
-  { label: "每年", value: "yearly" }
-]
+// pages/tasks/detail/detail.ts
+import { getTask, updateTask, deleteTask } from '../../../api/tasks'
+import { getSubtasks } from '../../../api/subtasks'
+import type { TaskItem } from '../../../api/types'
 
 Page({
   data: {
-    taskId: "",
-    mode: "edit",
-    lists: [] as ListItem[],
-    listIndex: 0,
-    form: {
-      list_id: "",
-      title: "",
-      description: "",
-      meaning: "",
-      due_date: "",
-      due_time: "",
-      priority: 0,
-      tagsText: "",
-      is_important: false,
-      eisenhower_quadrant: "",
-      status: "todo",
-      repeat_freq: "",
-      repeat_interval: 1
-    },
-    subtasks: [] as SubtaskItem[],
-    newSubtaskTitle: "",
-    attachments: [] as AttachmentItem[],
-    reminders: [] as ReminderItem[],
-    reminderOffsets: REMINDER_OFFSETS.map((value) => ({ label: `${value}分钟`, value, checked: false })),
-    loading: false,
-    priorityOptions,
-    eisenhowerOptions,
-    repeatOptions,
-    repeatIndex: 0,
-    quadrantIndex: 0
+    taskId: '',
+    task: {} as TaskItem,
+    subtasks: [],
+    completedSubtasks: 0,
+    priorityLabels: ['无', '低', '中', '高'],
+    changes: {} as Partial<TaskItem>,
+    showTagEditor: false
   },
-  onLoad(options: { id?: string; mode?: string; list_id?: string }) {
-    const taskId = options.id || ""
-    const mode = options.mode || (taskId ? "edit" : "create")
-    this.setData({ taskId, mode })
-    this.bootstrap(options.list_id)
-  },
-  async onPullDownRefresh() {
-    await this.bootstrap()
-    wx.stopPullDownRefresh()
-  },
-  async bootstrap(prefillListId?: string) {
-    this.setData({ loading: true })
-    try {
-      await this.fetchLists(prefillListId)
-      if (this.data.taskId) {
-        await this.fetchTask()
-        await Promise.all([this.fetchSubtasks(), this.fetchAttachments(), this.fetchReminders()])
-      }
-    } finally {
-      this.setData({ loading: false })
-    }
-  },
-  async fetchLists(prefillListId?: string) {
-    const lists = await listLists()
-    const selectedListId = prefillListId || this.data.form.list_id || lists[0]?.id || ""
-    const listIndex = Math.max(
-      0,
-      lists.findIndex((item) => item.id === selectedListId)
-    )
-    this.setData({ lists, listIndex, "form.list_id": selectedListId })
-  },
-  async fetchTask() {
-    const task = await getTask(this.data.taskId)
-    const listIndex = Math.max(
-      0,
-      this.data.lists.findIndex((item) => item.id === task.list_id)
-    )
-    const quadrantIndex = Math.max(
-      0,
-      eisenhowerOptions.findIndex((item) => item === (task.eisenhower_quadrant || ""))
-    )
-    const repeatIndex = Math.max(
-      0,
-      repeatOptions.findIndex((item) => item.value === (task.repeat_rule?.freq || ""))
-    )
-    this.setData({
-      listIndex,
-      quadrantIndex,
-      repeatIndex,
-      form: {
-        list_id: task.list_id,
-        title: task.title,
-        description: task.description || "",
-        meaning: task.meaning || "",
-        due_date: task.due_date || "",
-        due_time: task.due_time || "",
-        priority: task.priority,
-        tagsText: (task.tags || []).join(","),
-        is_important: !!task.is_important,
-        eisenhower_quadrant: task.eisenhower_quadrant || "",
-        status: task.status,
-        repeat_freq: task.repeat_rule?.freq || "",
-        repeat_interval: task.repeat_rule?.interval || 1
-      }
-    })
-  },
-  async fetchSubtasks() {
-    if (!this.data.taskId) return
-    const subtasks = await listSubtasks(this.data.taskId)
-    this.setData({ subtasks })
-  },
-  async fetchAttachments() {
-    if (!this.data.taskId) return
-    const attachments = await listAttachments(this.data.taskId)
-    this.setData({ attachments })
-  },
-  async fetchReminders() {
-    if (!this.data.taskId) return
-    const reminders = await listReminders(this.data.taskId)
-    this.setData({ reminders })
-  },
-  onInputChange(event: WechatMiniprogram.Input) {
-    const field = event.currentTarget.dataset.field as string
-    this.setData({ [`form.${field}`]: event.detail.value })
-  },
-  onSwitchChange(event: WechatMiniprogram.SwitchChange) {
-    const field = event.currentTarget.dataset.field as string
-    this.setData({ [`form.${field}`]: event.detail.value })
-  },
-  onListChange(event: WechatMiniprogram.PickerChange) {
-    const index = Number(event.detail.value)
-    const listId = this.data.lists[index]?.id || ""
-    this.setData({ listIndex: index, "form.list_id": listId })
-  },
-  onPriorityChange(event: WechatMiniprogram.PickerChange) {
-    const index = Number(event.detail.value)
-    const value = priorityOptions[index] || 0
-    this.setData({ "form.priority": value })
-  },
-  onQuadrantChange(event: WechatMiniprogram.PickerChange) {
-    const index = Number(event.detail.value)
-    const value = eisenhowerOptions[index] || ""
-    this.setData({ "form.eisenhower_quadrant": value, quadrantIndex: index })
-  },
-  onRepeatChange(event: WechatMiniprogram.PickerChange) {
-    const index = Number(event.detail.value)
-    const value = repeatOptions[index].value
-    this.setData({ "form.repeat_freq": value, repeatIndex: index })
-  },
-  onDateChange(event: WechatMiniprogram.PickerChange) {
-    this.setData({ "form.due_date": event.detail.value })
-  },
-  onTimeChange(event: WechatMiniprogram.PickerChange) {
-    this.setData({ "form.due_time": event.detail.value })
-  },
-  async saveTask() {
-    const form = this.data.form
-    if (!form.title) {
-      wx.showToast({ title: "请输入标题", icon: "none" })
+
+  async onLoad(options: Record<string, string>) {
+    const { id } = options
+    if (!id) {
+      wx.showToast({ title: '参数错误', icon: 'none' })
+      wx.navigateBack()
       return
-    }
-    const payload: Record<string, any> = {
-      list_id: form.list_id,
-      title: form.title,
-      description: form.description,
-      meaning: form.meaning,
-      due_date: form.due_date || null,
-      due_time: form.due_time || null,
-      priority: Number(form.priority || 0),
-      tags: form.tagsText ? form.tagsText.split(",").map((value) => value.trim()).filter(Boolean) : [],
-      is_important: form.is_important,
-      eisenhower_quadrant: form.eisenhower_quadrant || null,
-      status: form.status
-    }
-    if (form.repeat_freq) {
-      payload.repeat_rule = {
-        freq: form.repeat_freq,
-        interval: Number(form.repeat_interval || 1)
-      }
-    } else {
-      payload.repeat_rule = null
     }
 
-    if (this.data.mode === "create") {
-      const created = await createTask(payload)
-      this.setData({ taskId: created.id, mode: "edit" })
-      await Promise.all([this.fetchSubtasks(), this.fetchAttachments(), this.fetchReminders()])
-    } else {
-      await updateTask(this.data.taskId, payload)
+    this.setData({ taskId: id })
+    await this.loadTask()
+  },
+
+  async loadTask() {
+    wx.showLoading({ title: '加载中...' })
+    try {
+      const task = await getTask(this.data.taskId)
+      const subtasks = await getSubtasks(this.data.taskId)
+
+      const completedSubtasks = subtasks.filter(s => s.is_completed).length
+
+      this.setData({
+        task,
+        subtasks,
+        completedSubtasks
+      })
+
+      wx.setNavigationBarTitle({ title: task.title || '任务详情' })
+    } catch (error) {
+      console.error('Failed to load task:', error)
+      wx.showToast({ title: '加载失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
     }
-    wx.showToast({ title: "已保存", icon: "success" })
   },
-  async removeTask() {
-    if (!this.data.taskId) return
-    const result = await new Promise((resolve) => {
-      wx.showModal({ title: "删除任务", content: "确认删除该任务？", success: (res) => resolve(res.confirm) })
-    })
-    if (!result) return
-    await deleteTask(this.data.taskId)
-    wx.navigateBack()
+
+  onTitleInput(e: WechatMiniprogram.Input) {
+    this.updateChanges('title', e.detail.value)
   },
-  onSubtaskInput(event: WechatMiniprogram.Input) {
-    this.setData({ newSubtaskTitle: event.detail.value })
+
+  onDescriptionInput(e: WechatMiniprogram.Input) {
+    this.updateChanges('description', e.detail.value)
   },
-  async addSubtask() {
-    const title = this.data.newSubtaskTitle.trim()
-    if (!title || !this.data.taskId) return
-    await createSubtask(this.data.taskId, { title })
-    this.setData({ newSubtaskTitle: "" })
-    await this.fetchSubtasks()
+
+  onMeaningInput(e: WechatMiniprogram.Input) {
+    this.updateChanges('meaning', e.detail.value)
   },
-  async toggleSubtask(event: WechatMiniprogram.SwitchChange) {
-    const subtaskId = event.currentTarget.dataset.id as string
-    const checked = event.detail.value
-    await updateSubtask(this.data.taskId, subtaskId, { is_completed: checked })
-    await this.fetchSubtasks()
+
+  updateChanges(key: keyof TaskItem, value: any) {
+    const changes = this.data.changes
+    changes[key] = value
+    this.setData({ changes })
   },
-  async removeSubtask(event: WechatMiniprogram.TouchEvent) {
-    const subtaskId = event.currentTarget.dataset.id as string
-    await deleteSubtask(this.data.taskId, subtaskId)
-    await this.fetchSubtasks()
-  },
-  async chooseAttachment() {
-    if (!this.data.taskId) {
-      wx.showToast({ title: "请先保存任务", icon: "none" })
-      return
+
+  async onToggle() {
+    const newStatus = this.data.task.status === 'done' ? 'todo' : 'done'
+    try {
+      await updateTask(this.data.taskId, { status: newStatus })
+      this.setData({ 'task.status': newStatus })
+      wx.showToast({ title: newStatus === 'done' ? '已完成' : '已恢复', icon: 'success' })
+    } catch (error) {
+      console.error('Failed to toggle task:', error)
+      wx.showToast({ title: '操作失败', icon: 'none' })
     }
-    wx.chooseImage({
-      count: 1,
-      success: async (result) => {
-        const filePath = result.tempFilePaths[0]
-        if (filePath) {
-          await uploadAttachment(this.data.taskId, filePath)
-          await this.fetchAttachments()
+  },
+
+  onDateClick() {
+    const that = this
+    const currentDate = this.data.task.due_date ? new Date(this.data.task.due_date) : new Date()
+
+    wx.showModal({
+      title: '选择日期',
+      editable: true,
+      placeholderText: currentDate.toISOString().split('T')[0],
+      success: async (res) => {
+        if (res.confirm && res.content) {
+          try {
+            await updateTask(that.data.taskId, { due_date: res.content })
+            that.setData({ 'task.due_date': res.content })
+            wx.showToast({ title: '已设置', icon: 'success' })
+          } catch (error) {
+            console.error('Failed to update date:', error)
+            wx.showToast({ title: '设置失败', icon: 'none' })
+          }
         }
       }
     })
   },
-  previewAttachment(event: WechatMiniprogram.TouchEvent) {
-    const url = event.currentTarget.dataset.url as string
-    if (url) {
-      wx.previewImage({ urls: [url] })
+
+  onTimeClick() {
+    const that = this
+    wx.showModal({
+      title: '选择时间',
+      editable: true,
+      placeholderText: this.data.task.due_time || '09:00',
+      success: async (res) => {
+        if (res.confirm && res.content) {
+          try {
+            await updateTask(that.data.taskId, { due_time: res.content })
+            that.setData({ 'task.due_time': res.content })
+            wx.showToast({ title: '已设置', icon: 'success' })
+          } catch (error) {
+            console.error('Failed to update time:', error)
+            wx.showToast({ title: '设置失败', icon: 'none' })
+          }
+        }
+      }
+    })
+  },
+
+  onListClick() {
+    const that = this
+    // TODO: Load actual lists from backend
+    wx.showActionSheet({
+      itemList: ['收件箱', '工作', '个人', '学习'],
+      success: async (res) => {
+        try {
+          const listId = res.tapIndex + 1
+          await updateTask(that.data.taskId, { list_id: listId })
+          // @ts-ignore
+          that.setData({ 'task.list_id': listId })
+          wx.showToast({ title: '已移动', icon: 'success' })
+        } catch (error) {
+          console.error('Failed to update list:', error)
+          wx.showToast({ title: '移动失败', icon: 'none' })
+        }
+      }
+    })
+  },
+
+  onPriorityClick() {
+    wx.showActionSheet({
+      itemList: ['无优先级', '低优先级', '中优先级', '高优先级'],
+      success: async (res) => {
+        try {
+          await updateTask(this.data.taskId, { priority: res.tapIndex })
+          this.setData({ 'task.priority': res.tapIndex })
+        } catch (error) {
+          console.error('Failed to update priority:', error)
+          wx.showToast({ title: '更新失败', icon: 'none' })
+        }
+      }
+    })
+  },
+
+  onTagsClick() {
+    this.setData({ showTagEditor: true })
+  },
+
+  onTagConfirm(e: WechatMiniprogram.CustomEvent) {
+    const { tags } = e.detail
+    try {
+      // TODO: Call API to update tags
+      // await updateTask(this.data.taskId, { tags })
+
+      this.setData({
+        'task.tags': tags,
+        showTagEditor: false
+      })
+
+      wx.showToast({ title: '标签已更新', icon: 'success' })
+    } catch (error) {
+      console.error('Failed to update tags:', error)
+      wx.showToast({ title: '更新失败', icon: 'none' })
     }
   },
-  async removeAttachment(event: WechatMiniprogram.TouchEvent) {
-    const attachmentId = event.currentTarget.dataset.id as string
-    await deleteAttachment(this.data.taskId, attachmentId)
-    await this.fetchAttachments()
+
+  onTagCancel() {
+    this.setData({ showTagEditor: false })
   },
-  onOffsetChange(event: WechatMiniprogram.CheckboxChange) {
-    const selected = event.detail.value.map((value) => Number(value))
-    const reminderOffsets = this.data.reminderOffsets.map((item) => ({
-      ...item,
-      checked: selected.includes(item.value)
-    }))
-    this.setData({ reminderOffsets })
+
+  async onToggleSubtask(e: WechatMiniprogram.TouchEvent) {
+    const { index } = e.currentTarget.dataset
+    const subtask = this.data.subtasks[index]
+
+    if (!subtask) return
+
+    try {
+      // TODO: Call API to toggle subtask
+      // await updateSubtask(subtask.id, { is_completed: !subtask.is_completed })
+
+      const subtasks = [...this.data.subtasks]
+      subtasks[index].is_completed = !subtasks[index].is_completed
+
+      const completedSubtasks = subtasks.filter(s => s.is_completed).length
+
+      this.setData({
+        subtasks,
+        completedSubtasks
+      })
+    } catch (error) {
+      console.error('Failed to toggle subtask:', error)
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
   },
-  async createOffsetsReminder() {
-    if (!this.data.taskId) return
-    const offsets = this.data.reminderOffsets.filter((item) => item.checked).map((item) => item.value)
-    if (!offsets.length) {
-      wx.showToast({ title: "请选择提醒时间", icon: "none" })
+
+  async onSave() {
+    if (Object.keys(this.data.changes).length === 0) {
+      wx.navigateBack()
       return
     }
-    await createRemindersFromOffsets(this.data.taskId, offsets)
-    await this.fetchReminders()
+
+    wx.showLoading({ title: '保存中...' })
+    try {
+      await updateTask(this.data.taskId, this.data.changes)
+      wx.showToast({ title: '已保存', icon: 'success' })
+      setTimeout(() => wx.navigateBack(), 1500)
+    } catch (error) {
+      console.error('Failed to save task:', error)
+      wx.showToast({ title: '保存失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
+    }
   },
-  async removeReminder(event: WechatMiniprogram.TouchEvent) {
-    const reminderId = event.currentTarget.dataset.id as string
-    await deleteReminder(this.data.taskId, reminderId)
-    await this.fetchReminders()
+
+  async onDelete() {
+    const res = await wx.showModal({
+      title: '确认删除',
+      content: '删除后无法恢复'
+    })
+
+    if (res.confirm) {
+      wx.showLoading({ title: '删除中...' })
+      try {
+        await deleteTask(this.data.taskId)
+        wx.showToast({ title: '已删除', icon: 'success' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      } catch (error) {
+        console.error('Failed to delete task:', error)
+        wx.showToast({ title: '删除失败', icon: 'none' })
+      } finally {
+        wx.hideLoading()
+      }
+    }
   },
-  async snoozeReminder(event: WechatMiniprogram.TouchEvent) {
-    const reminderId = event.currentTarget.dataset.id as string
-    await snoozeReminder(reminderId, 10)
-    await this.fetchReminders()
+
+  onBack() {
+    wx.navigateBack()
+  },
+
+  onMore() {
+    wx.showActionSheet({
+      itemList: ['复制任务', '移动到清单', '分享'],
+      success: (res) => {
+        switch (res.tapIndex) {
+          case 0:
+            wx.setClipboardData({ data: this.data.task.title })
+            wx.showToast({ title: '已复制', icon: 'success' })
+            break
+          case 1:
+            wx.showToast({ title: '移动功能开发中', icon: 'none' })
+            break
+          case 2:
+            wx.showToast({ title: '分享功能开发中', icon: 'none' })
+            break
+        }
+      }
+    })
   }
 })

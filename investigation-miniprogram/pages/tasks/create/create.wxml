@@ -1,0 +1,82 @@
+<!-- pages/tasks/create/create.wxml -->
+<view class="page">
+  <view class="nav-bar">
+    <view class="nav-btn" bindtap="onCancel">取消</view>
+    <view class="nav-title">新建任务</view>
+    <view class="nav-btn primary" bindtap="onSave">保存</view>
+  </view>
+
+  <scroll-view class="content" scroll-y>
+    <view class="card">
+      <view class="title-row">
+        <input class="title-input" value="{{title}}" bindinput="onTitleInput" placeholder="准备做什么？" placeholder-class="title-placeholder" focus="{{true}}" />
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="field-row" bindtap="onSelectDate">
+        <view class="field-label">📅 截止日期</view>
+        <view class="field-value">{{dueDate || '无'}}</view>
+        <text class="field-arrow">›</text>
+      </view>
+
+      <view class="field-row" bindtap="onSelectTime">
+        <view class="field-label">⏰ 提醒时间</view>
+        <view class="field-value">{{dueTime || '无'}}</view>
+        <text class="field-arrow">›</text>
+      </view>
+
+      <view class="field-row" bindtap="onSelectList">
+        <view class="field-label">📋 清单</view>
+        <view class="field-value">{{currentList.name}}</view>
+        <text class="field-arrow">›</text>
+      </view>
+
+      <view class="field-row" bindtap="onSelectPriority">
+        <view class="field-label">🔴 优先级</view>
+        <view class="priority-badge priority-{{priority}}">
+          <text>{{priorityLabels[priority]}}</text>
+        </view>
+        <text class="field-arrow">›</text>
+      </view>
+
+      <view class="field-row" bindtap="onSelectTags">
+        <view class="field-label">🏷️ 标签</view>
+        <view class="field-value">
+          <text wx:if="{{tags.length === 0}}">无</text>
+          <view class="tag-list" wx:else>
+            <text class="tag-item" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+        <text class="field-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="field-title">描述</view>
+      <textarea class="description-input" value="{{description}}" bindinput="onDescriptionInput" placeholder="添加描述..." maxlength="1000" auto-height />
+    </view>
+
+    <view class="card special">
+      <view class="field-title">✨ 任务意义</view>
+      <textarea class="meaning-input" value="{{meaning}}" bindinput="onMeaningInput" placeholder="为什么做这个任务？" maxlength="500" />
+      <view class="hint">记录任务的意义，帮助你理解"为什么做"</view>
+    </view>
+
+    <view class="card">
+      <view class="field-title">子任务</view>
+      <view class="subtask-list" wx:if="{{subtasks.length > 0}}">
+        <view class="subtask-item" wx:for="{{subtasks}}" wx:key="index">
+          <view class="subtask-checkbox" bindtap="onToggleSubtask" data-index="{{index}}">
+            <text wx:if="{{item.completed}}">✓</text>
+          </view>
+          <input class="subtask-input" value="{{item.title}}" bindinput="onSubtaskInput" data-index="{{index}}" placeholder="子任务" />
+          <view class="subtask-delete" catchtap="onDeleteSubtask" data-index="{{index}}">×</view>
+        </view>
+      </view>
+      <view class="add-subtask" bindtap="onAddSubtask">
+        <text>+ 添加子任务</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>

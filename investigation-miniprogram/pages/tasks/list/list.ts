@@ -1,109 +1,224 @@
-import { listLists } from "../../../api/lists"
-import { listTasks, updateTask } from "../../../api/tasks"
-import { smartList } from "../../../api/views"
-import type { ListItem, TaskItem } from "../../../api/types"
+// pages/tasks/list/list.ts
+import { listTasks, updateTask, deleteTask, createTask } from '../../../api/tasks'
+import { listLists } from '../../../api/lists'
+import type { TaskItem, ListItem } from '../../../api/types'
 
-const viewOptions = [
-  { label: "全部", value: "all" },
-  { label: "今天", value: "today" },
-  { label: "明天", value: "tomorrow" },
-  { label: "未来7天", value: "next7" },
-  { label: "逾期", value: "overdue" },
-  { label: "无日期", value: "nodate" },
-  { label: "收件箱", value: "inbox" }
-]
+interface TaskGroup {
+  todo: TaskItem[]
+  done: TaskItem[]
+}
 
-const statusOptions = [
-  { label: "待办", value: "todo" },
-  { label: "已完成", value: "done" },
-  { label: "全部", value: "all" }
-]
+interface ListWithTasks extends ListItem {
+  tasks: TaskGroup
+}
 
 Page({
   data: {
-    lists: [] as ListItem[],
-    tasks: [] as TaskItem[],
-    viewOptions,
-    statusOptions,
-    listIndex: 0,
-    viewIndex: 0,
-    statusIndex: 0,
-    searchQuery: "",
-    loading: false
+    lists: [] as ListWithTasks[],
+    currentListIndex: 0,
+    currentList: {} as ListItem,
+    hasPrevList: false,
+    hasNextList: false,
+    showSwipePanel: false,
+    selectedTaskId: ''
   },
-  onShow() {
-    this.bootstrap()
+
+  async onLoad() {
+    await this.loadLists()
   },
-  async onPullDownRefresh() {
-    await this.bootstrap()
-    wx.stopPullDownRefresh()
-  },
-  async bootstrap() {
-    this.setData({ loading: true })
+
+  async loadLists() {
+    wx.showLoading({ title: '加载中...' })
     try {
-      await this.fetchLists()
-      await this.fetchTasks()
+      const lists = await listLists() as ListItem[]
+
+      // 为每个清单加载任务
+      const listsWithTasks = await Promise.all(
+        lists.map(async (list) => {
+          const tasks = await listTasks({ list_id: list.id })
+          return {
+            ...list,
+            tasks: this.groupTasks(tasks)
+          }
+        })
+      )
+
+      this.setData({
+        lists: listsWithTasks,
+        currentList: listsWithTasks[0] || { name: '收件箱', id: '' },
+        hasPrevList: false,
+        hasNextList: listsWithTasks.length > 1
+      })
+    } catch (error) {
+      wx.showToast({ title: '加载失败', icon: 'none' })
     } finally {
-      this.setData({ loading: false })
+      wx.hideLoading()
     }
   },
-  async fetchLists() {
-    const lists = await listLists()
-    const allList = { id: "", name: "全部", user_id: "", created_at: "", updated_at: "" } as ListItem
-    this.setData({ lists: [allList, ...lists] })
-  },
-  async fetchTasks() {
-    const listId = this.data.lists[this.data.listIndex]?.id || ""
-    const viewType = viewOptions[this.data.viewIndex].value
-    const statusValue = statusOptions[this.data.statusIndex].value
 
-    if (viewType === "all") {
-      const params: Record<string, any> = {}
-      if (listId) params.list_id = listId
-      if (this.data.searchQuery) params.query = this.data.searchQuery
-      if (statusValue !== "all") params.status = statusValue
-      const tasks = await listTasks(params)
-      this.setData({ tasks })
-      return
+  groupTasks(tasks: TaskItem[]): TaskGroup {
+    return {
+      todo: tasks.filter(t => t.status === 'todo'),
+      done: tasks.filter(t => t.status === 'done')
     }
+  },
 
-    const tasks = await smartList(viewType, {
-      list_id: listId || undefined,
-      status: "todo"
+  onListChange(e: WechatMiniprogram.SwiperChange) {
+    const index = e.detail.current
+    const lists = this.data.lists
+
+    this.setData({
+      currentListIndex: index,
+      currentList: lists[index],
+      hasPrevList: index > 0,
+      hasNextList: index < lists.length - 1
     })
-    this.setData({ tasks })
   },
-  onListChange(event: WechatMiniprogram.PickerChange) {
-    this.setData({ listIndex: Number(event.detail.value) })
-    this.fetchTasks()
+
+  onMenu() {
+    wx.showActionSheet({
+      itemList: ['系统设置', '用户中心', '关于'],
+      success: (res) => {
+        switch (res.tapIndex) {
+          case 0:
+            wx.switchTab({ url: '/pages/settings/settings' })
+            break
+          case 1:
+            wx.showToast({ title: '用户中心开发中', icon: 'none' })
+            break
+          case 2:
+            wx.showModal({ title: '关于', content: '格物清单 v1.0\n基于滴答清单设计的任务管理小程序' })
+            break
+        }
+      }
+    })
   },
-  onViewChange(event: WechatMiniprogram.PickerChange) {
-    this.setData({ viewIndex: Number(event.detail.value) })
-    this.fetchTasks()
+
+  onSearch() {
+    wx.navigateTo({ url: '/pages/search/search' })
   },
-  onStatusChange(event: WechatMiniprogram.PickerChange) {
-    this.setData({ statusIndex: Number(event.detail.value) })
-    this.fetchTasks()
+
+  onQuickAdd(e: WechatMiniprogram.CustomEvent) {
+    const { title } = e.detail
+    this.createTask(title)
   },
-  onSearchInput(event: WechatMiniprogram.Input) {
-    this.setData({ searchQuery: event.detail.value })
+
+  onCreateTask() {
+    const listId = this.data.currentList.id
+    const query = listId ? `?listId=${listId}` : ''
+    wx.navigateTo({
+      url: `/pages/tasks/create/create${query}`
+    })
   },
-  onSearchConfirm() {
-    this.fetchTasks()
+
+  async createTask(title: string) {
+    if (!title.trim()) return
+
+    wx.showLoading({ title: '添加中...' })
+    try {
+      await createTask({
+        list_id: this.data.currentList.id || undefined,
+        title,
+        status: 'todo'
+      })
+      wx.showToast({ title: '已添加', icon: 'success' })
+      await this.loadLists()
+    } catch (error) {
+      console.error('Failed to create task:', error)
+      wx.showToast({ title: '添加失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
+    }
   },
-  goToDetail(event: WechatMiniprogram.TouchEvent) {
-    const taskId = event.currentTarget.dataset.id as string
+
+  async onTaskToggle(e: WechatMiniprogram.CustomEvent) {
+    const { taskId } = e.detail
+    const task = this.findTask(taskId)
+    if (!task) return
+
+    const newStatus = task.status === 'done' ? 'todo' : 'done'
+
+    try {
+      await updateTask(taskId, { status: newStatus })
+      if (newStatus === 'done') {
+        wx.showToast({ title: '已完成', icon: 'success', duration: 1500 })
+
+        // 5秒后可撤回
+        setTimeout(() => {
+          wx.showModal({
+            title: '撤回',
+            content: '是否撤回已完成状态？',
+            confirmText: '撤回',
+            cancelText: '保持完成',
+            success: (res) => {
+              if (res.confirm) {
+                updateTask(taskId, { status: 'todo' }).then(() => {
+                  this.loadLists()
+                })
+              }
+            }
+          })
+        }, 5000)
+      }
+      await this.loadLists()
+    } catch (error) {
+      console.error('Failed to toggle task:', error)
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
+  },
+
+  onTaskDetail(e: WechatMiniprogram.CustomEvent) {
+    const { taskId } = e.detail
     wx.navigateTo({ url: `/pages/tasks/detail/detail?id=${taskId}` })
   },
-  goToCreate() {
-    const listId = this.data.lists[this.data.listIndex]?.id
-    const query = listId ? `?mode=create&list_id=${listId}` : "?mode=create"
-    wx.navigateTo({ url: `/pages/tasks/detail/detail${query}` })
+
+  onTaskMore(e: WechatMiniprogram.CustomEvent) {
+    const { taskId } = e.detail
+    this.setData({ showSwipePanel: true, selectedTaskId: taskId })
   },
-  async toggleTask(event: WechatMiniprogram.SwitchChange) {
-    const taskId = event.currentTarget.dataset.id as string
-    const checked = event.detail.value
-    await updateTask(taskId, { status: checked ? "done" : "todo" })
-    this.fetchTasks()
+
+  hideSwipePanel() {
+    this.setData({ showSwipePanel: false })
+  },
+
+  noop() {},
+
+  async onSwipeComplete() {
+    await this.onTaskToggle({ detail: { taskId: this.data.selectedTaskId } })
+    this.hideSwipePanel()
+  },
+
+  onSwipeEdit() {
+    wx.navigateTo({
+      url: `/pages/tasks/detail/detail?id=${this.data.selectedTaskId}`
+    })
+    this.hideSwipePanel()
+  },
+
+  async onSwipeDelete() {
+    const res = await wx.showModal({ title: '确认删除', content: '删除后无法恢复' })
+    if (res.confirm) {
+      try {
+        await deleteTask(this.data.selectedTaskId)
+        wx.showToast({ title: '已删除', icon: 'success' })
+        await this.loadLists()
+      } catch (error) {
+        console.error('Failed to delete task:', error)
+        wx.showToast({ title: '删除失败', icon: 'none' })
+      }
+    }
+    this.hideSwipePanel()
+  },
+
+  onLoadMore() {
+    // TODO: 分页加载
+  },
+
+  findTask(taskId: string): TaskItem | undefined {
+    for (const list of this.data.lists) {
+      const task = [...list.tasks.todo, ...list.tasks.done].find(t => t.id === taskId)
+      if (task) return task
+    }
+    return undefined
   }
 })

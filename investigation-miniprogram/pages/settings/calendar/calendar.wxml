@@ -1,0 +1,68 @@
+<!-- pages/settings/calendar/calendar.wxml -->
+<view class="page">
+  <view class="nav-bar">
+    <view class="nav-btn" bindtap="onBack">←</view>
+    <view class="nav-title">日历设置</view>
+    <view class="nav-btn"></view>
+  </view>
+
+  <scroll-view class="content" scroll-y>
+    <view class="section-title">默认视图</view>
+    <view class="settings-card card">
+      <view class="setting-item" bindtap="onDefaultView">
+        <view class="setting-left">
+          <text class="setting-label">默认显示</text>
+          <text class="setting-desc">打开日历时的默认视图</text>
+        </view>
+        <view class="setting-value">{{defaultView}}</view>
+      </view>
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">每周开始</text>
+          <text class="setting-desc">一周的第一天是</text>
+        </view>
+        <view class="setting-value" bindtap="onWeekStart">
+          <text>{{weekStart === 0 ? '周日' : '周一'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-title">显示选项</view>
+    <view class="settings-card card">
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">显示已完成任务</text>
+          <text class="setting-desc">在日历上显示已完成的任务</text>
+        </view>
+        <switch checked="{{showCompleted}}" bindchange="onShowCompletedChange" />
+      </view>
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">显示任务数量</text>
+          <text class="setting-desc">在日期上显示任务数量</text>
+        </view>
+        <switch checked="{{showTaskCount}}" bindchange="onShowTaskCountChange" />
+      </view>
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">高亮今天</text>
+          <text class="setting-desc">在日历上高亮显示今天的日期</text>
+        </view>
+        <switch checked="{{highlightToday}}" bindchange="onHighlightTodayChange" />
+      </view>
+    </view>
+
+    <view class="section-title">节假日</view>
+    <view class="settings-card card">
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">显示节假日</text>
+          <text class="setting-desc">在日历上标记中国法定节假日</text>
+        </view>
+        <switch checked="{{showHolidays}}" bindchange="onShowHolidaysChange" />
+      </view>
+    </view>
+
+    <view class="hint">提示：在日历页面左右滑动可切换月份</view>
+  </scroll-view>
+</view>

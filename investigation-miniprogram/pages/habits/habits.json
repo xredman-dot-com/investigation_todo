@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "习惯",
+  "usingComponents": {
+    "habit-create": "/components/habit-create/habit-create"
+  }
+}

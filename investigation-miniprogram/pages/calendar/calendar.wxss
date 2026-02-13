@@ -1,0 +1,142 @@
+/* pages/calendar/calendar.wxss */
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+}
+
+.tab-switch {
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  background-color: var(--surface-color);
+}
+
+.tab-item {
+  padding: 12rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.tab-item.active {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+}
+
+.date-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background-color: var(--surface-color);
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.nav-btn {
+  padding: 16rpx;
+  font-size: 36rpx;
+  color: var(--primary-color);
+}
+
+.current-date {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.calendar-grid {
+  flex: 1;
+  padding: 24rpx;
+}
+
+.weekday {
+  width: 14.28%;
+  text-align: center;
+  padding: 12rpx 0;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.calendar-days {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.day-cell {
+  width: 14.28%;
+  aspect-ratio: 1;
+  border: 1rpx solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.day-number {
+  font-size: 26rpx;
+  color: var(--text-color);
+  margin-bottom: 8rpx;
+}
+
+.day-number.today {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.day-cell.empty {
+  background-color: transparent;
+}
+
+.task-dots {
+  display: flex;
+  gap: 4rpx;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 4rpx 0;
+}
+
+.task-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background-color: var(--priority-3);
+}
+
+.section-title {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin: 24rpx 0 16rpx;
+  padding-left: 8rpx;
+}
+
+.task-list {
+  margin-top: 16rpx;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.task-priority {
+  width: 6rpx;
+  border-radius: 3rpx;
+}
+
+.task-info {
+  flex: 1;
+  margin-left: 16rpx;
+}
+
+.task-title {
+  font-size: 28rpx;
+  color: var(--text-color);
+}
+
+.task-meta {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}

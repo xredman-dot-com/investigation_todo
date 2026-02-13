@@ -1,0 +1,73 @@
+<!-- pages/settings/pomodoro/pomodoro.wxml -->
+<view class="page">
+  <view class="nav-bar">
+    <view class="nav-btn" bindtap="onBack">←</view>
+    <view class="nav-title">番茄钟设置</view>
+    <view class="nav-btn"></view>
+  </view>
+
+  <scroll-view class="content" scroll-y>
+    <view class="section-title">番茄钟时长</view>
+    <view class="settings-card card">
+      <view class="setting-item" bindtap="onFocusTime">
+        <view class="setting-left">
+          <text class="setting-label">专注时长</text>
+          <text class="setting-desc">每个番茄钟的时长</text>
+        </view>
+        <view class="setting-value">{{focusTime}} 分钟</view>
+      </view>
+      <view class="setting-item" bindtap="onShortBreak">
+        <view class="setting-left">
+          <text class="setting-label">短休息</text>
+          <text class="setting-desc">番茄钟之间的休息时长</text>
+        </view>
+        <view class="setting-value">{{shortBreak}} 分钟</view>
+      </view>
+      <view class="setting-item" bindtap="onLongBreak">
+        <view class="setting-left">
+          <text class="setting-label">长休息</text>
+          <text class="setting-desc">完成4个番茄钟后的休息时长</text>
+        </view>
+        <view class="setting-value">{{longBreak}} 分钟</view>
+      </view>
+    </view>
+
+    <view class="section-title">自动设置</view>
+    <view class="settings-card card">
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">自动开始休息</text>
+          <text class="setting-desc">番茄钟完成后自动开始休息计时</text>
+        </view>
+        <switch checked="{{autoStartBreak}}" bindchange="onAutoStartBreakChange" />
+      </view>
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">自动开始专注</text>
+          <text class="setting-desc">休息结束后自动开始下一个番茄钟</text>
+        </view>
+        <switch checked="{{autoStartFocus}}" bindchange="onAutoStartFocusChange" />
+      </view>
+    </view>
+
+    <view class="section-title">声音与振动</view>
+    <view class="settings-card card">
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">提示音</text>
+          <text class="setting-desc">番茄钟完成时播放提示音</text>
+        </view>
+        <switch checked="{{soundEnabled}}" bindchange="onSoundEnabledChange" />
+      </view>
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">振动</text>
+          <text class="setting-desc">番茄钟完成时振动提醒</text>
+        </view>
+        <switch checked="{{vibrateEnabled}}" bindchange="onVibrateEnabledChange" />
+      </view>
+    </view>
+
+    <view class="hint">提示：番茄钟技术建议每4个番茄钟后休息15-30分钟</view>
+  </scroll-view>
+</view>

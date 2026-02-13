@@ -1,0 +1,81 @@
+<!-- components/tag-editor/tag-editor.wxml -->
+<view class="tag-editor-modal {{visible ? 'show' : ''}}" bindtap="onCancel">
+  <view class="modal-content" catchtap="onStopPropagation">
+    <view class="modal-header">
+      <view class="modal-title">选择标签</view>
+      <view class="modal-close" bindtap="onCancel">×</view>
+    </view>
+
+    <view class="modal-body">
+      <!-- 已选标签 -->
+      <view class="section" wx:if="{{selectedTags.length > 0}}">
+        <view class="section-title">已选标签</view>
+        <view class="tag-list selected">
+          <view
+            class="tag-item"
+            wx:for="{{selectedTags}}"
+            wx:key="*this"
+            bindtap="onRemoveTag"
+            data-tag="{{item}}"
+          >
+            {{item}} ×
+          </view>
+        </view>
+      </view>
+
+      <!-- 常用标签 -->
+      <view class="section" wx:if="{{commonTags.length > 0}}">
+        <view class="section-title">常用标签</view>
+        <view class="tag-list">
+          <view
+            class="tag-item {{selectedTags.includes(item) ? 'selected' : ''}}"
+            wx:for="{{commonTags}}"
+            wx:key="*this"
+            bindtap="onToggleTag"
+            data-tag="{{item}}"
+          >
+            {{item}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 所有标签 -->
+      <view class="section">
+        <view class="section-title">所有标签</view>
+        <view class="tag-list">
+          <view
+            class="tag-item {{selectedTags.includes(item) ? 'selected' : ''}}"
+            wx:for="{{allTags}}"
+            wx:key="*this"
+            bindtap="onToggleTag"
+            data-tag="{{item}}"
+          >
+            {{item}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 创建新标签 -->
+      <view class="section">
+        <view class="section-title">创建新标签</view>
+        <view class="create-tag">
+          <input
+            class="tag-input"
+            value="{{newTag}}"
+            bindinput="onTagInput"
+            placeholder="输入标签名称"
+            bindconfirm="onCreateTag"
+          />
+          <view class="create-btn {{newTag ? 'active' : ''}}" bindtap="onCreateTag">
+            +
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="modal-footer">
+      <view class="modal-btn cancel" bindtap="onCancel">取消</view>
+      <view class="modal-btn confirm" bindtap="onConfirm">确定</view>
+    </view>
+  </view>
+</view>

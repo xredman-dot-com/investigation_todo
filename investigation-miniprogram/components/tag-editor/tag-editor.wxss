@@ -1,0 +1,157 @@
+/* components/tag-editor/tag-editor.wxss */
+.tag-editor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 3000;
+}
+
+.tag-editor-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  width: 640rpx;
+  height: 900rpx;
+  background-color: var(--surface-color);
+  border-radius: 24rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1rpx solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.modal-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: var(--text-secondary);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24rpx;
+}
+
+.section {
+  margin-bottom: 32rpx;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 16rpx;
+  padding-left: 8rpx;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.tag-list.selected {
+  margin-bottom: 24rpx;
+}
+
+.tag-item {
+  padding: 12rpx 24rpx;
+  background-color: var(--background-color);
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  color: var(--text-color);
+  border: 2rpx solid transparent;
+}
+
+.tag-item.selected {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.create-tag {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.tag-input {
+  flex: 1;
+  padding: 20rpx 24rpx;
+  background-color: var(--background-color);
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: var(--text-color);
+}
+
+.create-btn {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-color);
+  border-radius: 50%;
+  font-size: 32rpx;
+  color: var(--text-secondary);
+}
+
+.create-btn.active {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 32rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+.modal-btn.cancel {
+  color: var(--text-secondary);
+  border-right: 1rpx solid var(--border-color);
+}
+
+.modal-btn.confirm {
+  color: var(--primary-color);
+}

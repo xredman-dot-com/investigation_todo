@@ -1,0 +1,73 @@
+<!-- pages/settings/notification/notification.wxml -->
+<view class="page">
+  <view class="nav-bar">
+    <view class="nav-btn" bindtap="onBack">←</view>
+    <view class="nav-title">提醒设置</view>
+    <view class="nav-btn"></view>
+  </view>
+
+  <scroll-view class="content" scroll-y>
+    <view class="section-title">任务提醒</view>
+    <view class="settings-card card">
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">开启提醒</text>
+          <text class="setting-desc">任务到期时发送通知</text>
+        </view>
+        <switch checked="{{taskReminderEnabled}}" bindchange="onTaskReminderChange" />
+      </view>
+      <view class="setting-item" bindtap="onDefaultTime">
+        <view class="setting-left">
+          <text class="setting-label">默认提醒时间</text>
+          <text class="setting-desc">任务默认提醒时间</text>
+        </view>
+        <view class="setting-value">{{defaultReminderTime}}</view>
+      </view>
+    </view>
+
+    <view class="section-title">番茄钟提醒</view>
+    <view class="settings-card card">
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">番茄钟开始提醒</text>
+          <text class="setting-desc">开始番茄钟时发送通知</text>
+        </view>
+        <switch checked="{{pomodoroStartReminder}}" bindchange="onPomodoroStartChange" />
+      </view>
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">番茄钟完成提醒</text>
+          <text class="setting-desc">完成番茄钟时发送通知</text>
+        </view>
+        <switch checked="{{pomodoroCompleteReminder}}" bindchange="onPomodoroCompleteChange" />
+      </view>
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">休息提醒</text>
+          <text class="setting-desc">休息时间结束前提醒</text>
+        </view>
+        <switch checked="{{breakReminder}}" bindchange="onBreakReminderChange" />
+      </view>
+    </view>
+
+    <view class="section-title">习惯提醒</view>
+    <view class="settings-card card">
+      <view class="setting-item">
+        <view class="setting-left">
+          <text class="setting-label">每日习惯提醒</text>
+          <text class="setting-desc">每天定时提醒打卡</text>
+        </view>
+        <switch checked="{{habitReminderEnabled}}" bindchange="onHabitReminderChange" />
+      </view>
+      <view class="setting-item" bindtap="onHabitTime">
+        <view class="setting-left">
+          <text class="setting-label">提醒时间</text>
+          <text class="setting-desc">每日习惯打卡提醒时间</text>
+        </view>
+        <view class="setting-value">{{habitReminderTime}}</view>
+      </view>
+    </view>
+
+    <view class="hint">提示：请确保微信通知权限已开启</view>
+  </scroll-view>
+</view>
