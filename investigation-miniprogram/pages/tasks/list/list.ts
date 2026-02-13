@@ -1,7 +1,7 @@
 // pages/tasks/list/list.ts
-import { listTasks, updateTask, deleteTask, createTask } from '../../api/tasks'
-import { listLists } from '../../api/lists'
-import type { TaskItem, ListItem } from '../../api/types'
+import { listTasks, updateTask, deleteTask, createTask } from '/api/tasks'
+import { listLists } from '/api/lists'
+import type { TaskItem, ListItem } from '/api/types'
 
 interface TaskGroup {
   todo: TaskItem[]

@@ -1,7 +1,7 @@
 // pages/tasks/detail/detail.ts
-import { getTask, updateTask, deleteTask } from '../../api/tasks'
-import { getSubtasks } from '../../api/subtasks'
-import type { TaskItem } from '../../api/types'
+import { getTask, updateTask, deleteTask } from '/api/tasks'
+import { getSubtasks } from '/api/subtasks'
+import type { TaskItem } from '/api/types'
 
 Page({
   data: {
