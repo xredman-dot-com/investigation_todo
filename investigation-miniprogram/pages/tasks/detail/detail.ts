@@ -79,18 +79,67 @@ Page({
   },
 
   onDateClick() {
-    // TODO: 日期选择器
-    wx.showToast({ title: '日期选择器开发中', icon: 'none' })
+    const that = this
+    const currentDate = this.data.task.due_date ? new Date(this.data.task.due_date) : new Date()
+
+    wx.showModal({
+      title: '选择日期',
+      editable: true,
+      placeholderText: currentDate.toISOString().split('T')[0],
+      success: async (res) => {
+        if (res.confirm && res.content) {
+          try {
+            await updateTask(that.data.taskId, { due_date: res.content })
+            that.setData({ 'task.due_date': res.content })
+            wx.showToast({ title: '已设置', icon: 'success' })
+          } catch (error) {
+            console.error('Failed to update date:', error)
+            wx.showToast({ title: '设置失败', icon: 'none' })
+          }
+        }
+      }
+    })
   },
 
   onTimeClick() {
-    // TODO: 时间选择器
-    wx.showToast({ title: '时间选择器开发中', icon: 'none' })
+    const that = this
+    wx.showModal({
+      title: '选择时间',
+      editable: true,
+      placeholderText: this.data.task.due_time || '09:00',
+      success: async (res) => {
+        if (res.confirm && res.content) {
+          try {
+            await updateTask(that.data.taskId, { due_time: res.content })
+            that.setData({ 'task.due_time': res.content })
+            wx.showToast({ title: '已设置', icon: 'success' })
+          } catch (error) {
+            console.error('Failed to update time:', error)
+            wx.showToast({ title: '设置失败', icon: 'none' })
+          }
+        }
+      }
+    })
   },
 
   onListClick() {
-    // TODO: 清单选择器
-    wx.showToast({ title: '清单选择器开发中', icon: 'none' })
+    const that = this
+    // TODO: Load actual lists from backend
+    wx.showActionSheet({
+      itemList: ['收件箱', '工作', '个人', '学习'],
+      success: async (res) => {
+        try {
+          const listId = res.tapIndex + 1
+          await updateTask(that.data.taskId, { list_id: listId })
+          // @ts-ignore
+          that.setData({ 'task.list_id': listId })
+          wx.showToast({ title: '已移动', icon: 'success' })
+        } catch (error) {
+          console.error('Failed to update list:', error)
+          wx.showToast({ title: '移动失败', icon: 'none' })
+        }
+      }
+    })
   },
 
   onPriorityClick() {
@@ -113,9 +162,29 @@ Page({
     wx.showToast({ title: '标签编辑器开发中', icon: 'none' })
   },
 
-  onToggleSubtask(e: WechatMiniprogram.TouchEvent) {
-    // TODO: 切换子任务状态
-    wx.showToast({ title: '子任务功能开发中', icon: 'none' })
+  async onToggleSubtask(e: WechatMiniprogram.TouchEvent) {
+    const { index } = e.currentTarget.dataset
+    const subtask = this.data.subtasks[index]
+
+    if (!subtask) return
+
+    try {
+      // TODO: Call API to toggle subtask
+      // await updateSubtask(subtask.id, { is_completed: !subtask.is_completed })
+
+      const subtasks = [...this.data.subtasks]
+      subtasks[index].is_completed = !subtasks[index].is_completed
+
+      const completedSubtasks = subtasks.filter(s => s.is_completed).length
+
+      this.setData({
+        subtasks,
+        completedSubtasks
+      })
+    } catch (error) {
+      console.error('Failed to toggle subtask:', error)
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
   },
 
   async onSave() {
