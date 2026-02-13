@@ -1,6 +1,156 @@
+/* pages/settings/settings.wxss */
 .page {
+  min-height: 100vh;
+  background-color: var(--background-color);
+  padding-bottom: 24rpx;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  margin: 24rpx;
+  padding: 32rpx;
+  background-color: var(--surface-color);
+  border-radius: 16rpx;
+}
+
+.profile-avatar {
+  width: 120rpx;
+  height: 120rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  font-size: 64rpx;
+  background-color: var(--background-color);
+  border-radius: 50%;
+  margin-right: 24rpx;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 8rpx;
+}
+
+.profile-email {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.profile-action {
+  font-size: 48rpx;
+  color: var(--text-secondary);
+}
+
+.section-title {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin: 32rpx 24rpx 16rpx;
+  padding-left: 8rpx;
+}
+
+.settings-card {
+  margin: 0 24rpx;
+  background-color: var(--surface-color);
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.setting-icon {
+  font-size: 40rpx;
+  margin-right: 24rpx;
+}
+
+.setting-label {
+  font-size: 32rpx;
+  color: var(--text-color);
+}
+
+.setting-arrow {
+  font-size: 40rpx;
+  color: var(--text-secondary);
+}
+
+.setting-item.danger .setting-label {
+  color: var(--danger-color);
+}
+
+.theme-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 24rpx;
+}
+
+.theme-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 33.33%;
+  padding: 16rpx;
+  margin-bottom: 16rpx;
+  border-radius: 12rpx;
+}
+
+.theme-item.active {
+  background-color: var(--background-color);
+}
+
+.theme-preview {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-bottom: 12rpx;
+  border: 4rpx solid transparent;
+}
+
+.theme-item.active .theme-preview {
+  border-color: var(--primary-color);
+}
+
+.theme-preview.default {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+}
+
+.theme-preview.warm {
+  background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+}
+
+.theme-preview.dark {
+  background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+}
+
+.theme-preview.green {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.theme-preview.purple {
+  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+}
+
+.theme-name {
+  font-size: 24rpx;
+  color: var(--text-color);
 }
