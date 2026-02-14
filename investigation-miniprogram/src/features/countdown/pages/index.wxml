@@ -32,19 +32,6 @@
     </view>
   </view>
 
-  <view class="create-card">
-    <view class="create-title">新增倒数日</view>
-    <input class="input" placeholder="例如：毕业 / 旅行" value="{{form.title}}" bindinput="onTitleInput" />
-    <picker mode="date" value="{{form.date}}" bindchange="onDateChange">
-      <view class="date-picker {{form.date ? '' : 'placeholder'}}">
-        {{form.date ? form.date : '选择日期'}}
-      </view>
-    </picker>
-    <view class="create-actions">
-      <button class="btn primary" bindtap="addItem">添加</button>
-    </view>
-  </view>
-
   <view class="list-section">
     <view class="section-title">我的倒数日</view>
     <view class="countdown-list">
@@ -64,6 +51,27 @@
     <view wx:if="{{items.length === 0}}" class="empty-state">
       <view class="empty-text">暂无倒数日</view>
       <view class="empty-hint">添加一个重要日期开始吧</view>
+    </view>
+  </view>
+
+  <view class="fab" bindtap="openForm">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <view class="modal-mask" wx:if="{{showForm}}" bindtap="closeForm"></view>
+  <view class="modal-sheet {{showForm ? 'open' : ''}}">
+    <view class="sheet-header">
+      <view class="sheet-title">新增倒数日</view>
+      <view class="sheet-close" bindtap="closeForm">×</view>
+    </view>
+    <view class="sheet-body">
+      <input class="input" placeholder="例如：毕业 / 旅行" value="{{form.title}}" bindinput="onTitleInput" />
+      <picker mode="date" value="{{form.date}}" bindchange="onDateChange">
+        <view class="date-picker {{form.date ? '' : 'placeholder'}}">
+          {{form.date ? form.date : '选择日期'}}
+        </view>
+      </picker>
+      <button class="btn primary" bindtap="addItem">添加</button>
     </view>
   </view>
 </view>

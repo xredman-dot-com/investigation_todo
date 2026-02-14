@@ -40,6 +40,7 @@ Page({
       nextTitle: "",
       nextDays: 0
     } as Summary,
+    showForm: false,
     form: {
       title: "",
       date: ""
@@ -73,6 +74,14 @@ Page({
     this.setData({ "form.date": e.detail.value })
   },
 
+  openForm() {
+    this.setData({ showForm: true })
+  },
+
+  closeForm() {
+    this.setData({ showForm: false })
+  },
+
   addItem() {
     const title = this.data.form.title.trim()
     const date = this.data.form.date
@@ -93,7 +102,7 @@ Page({
     }
     const nextItems = [newItem, ...items]
     this.saveItems(nextItems)
-    this.setData({ form: { title: "", date: "" } })
+    this.setData({ form: { title: "", date: "" }, showForm: false })
     this.loadItems()
   },
 
