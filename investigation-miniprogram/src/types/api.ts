@@ -142,6 +142,8 @@ export type DailyStat = {
   tasks_overdue: number
   pomodoro_count: number
   focus_minutes: number
+  countup_count: number
+  countup_minutes: number
   habits_completed: number
   active_tasks: number
   generated_at: string
@@ -158,6 +160,8 @@ export type WidgetSummary = {
   habits_completed: number
   pomodoro_count: number
   focus_minutes: number
+  countup_count: number
+  countup_minutes: number
 }
 
 export type SubscriptionMessage = {

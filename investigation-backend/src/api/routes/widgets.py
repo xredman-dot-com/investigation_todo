@@ -64,6 +64,11 @@ async def widget_summary(
         PomodoroSession.type == "focus",
         cast(PomodoroSession.started_at, Date) == today,
     )
+    countup_stmt = select(func.count(PomodoroSession.id), func.sum(PomodoroSession.duration)).where(
+        PomodoroSession.user_id == current_user.id,
+        PomodoroSession.type == "countup",
+        cast(PomodoroSession.started_at, Date) == today,
+    )
 
     due_today = (await db.execute(due_today_stmt)).scalars().all()
     overdue = (await db.execute(overdue_stmt)).scalars().all()
@@ -77,6 +82,9 @@ async def widget_summary(
     pomodoro_row = (await db.execute(pomodoro_stmt)).one()
     pomodoro_count = int(pomodoro_row[0] or 0)
     focus_minutes = int(pomodoro_row[1] or 0)
+    countup_row = (await db.execute(countup_stmt)).one()
+    countup_count = int(countup_row[0] or 0)
+    countup_minutes = int(countup_row[1] or 0)
 
     return WidgetSummary(
         date=today,
@@ -89,4 +97,6 @@ async def widget_summary(
         habits_completed=habits_completed,
         pomodoro_count=pomodoro_count,
         focus_minutes=focus_minutes,
+        countup_count=countup_count,
+        countup_minutes=countup_minutes,
     )

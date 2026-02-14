@@ -1,31 +1,112 @@
-<view class="container" style="{{themeStyle}}">
+<view class="page" style="{{themeStyle}}">
   <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchSessions" />
   <status-banner message="正在加载专注记录..." wx:if="{{isLoading}}" />
-  <view class="section card">
-    <view class="title">开始专注</view>
-    <view class="row" style="margin-top: 12rpx;">
-      <input class="input" type="number" value="{{duration}}" data-field="duration" bindinput="onInputChange" />
-      <view class="subtitle">分钟</view>
-      <input class="input" type="number" value="{{breakDuration}}" data-field="breakDuration" bindinput="onInputChange" />
-      <view class="subtitle">休息</view>
-    </view>
-    <view class="row" style="margin-top: 12rpx;">
-      <button class="btn" bindtap="startSession">开始</button>
-      <button class="btn--ghost" bindtap="completeSession">完成</button>
+
+  <view class="focus-header">
+    <view class="header-title">专注</view>
+    <view class="mode-tabs">
+      <view class="mode-tab {{viewMode === 'pomodoro' ? 'active' : ''}}" data-mode="pomodoro" bindtap="onModeChange">番茄计时</view>
+      <view class="mode-tab {{viewMode === 'countup' ? 'active' : ''}}" data-mode="countup" bindtap="onModeChange">正计时</view>
     </view>
   </view>
 
-  <view class="section card">
-    <view class="title">记录</view>
-    <view class="list-item" wx:for="{{sessions}}" wx:key="id">
-      <view class="row">
-        <view>{{item.type}} / {{item.duration}}分钟</view>
-        <view class="subtitle">{{item.status}}</view>
+  <view class="mini-stats">
+    <view class="mini-stat">
+      <view class="mini-label">番茄</view>
+      <view class="mini-value">{{todayStats.focusCount}}</view>
+    </view>
+    <view class="mini-divider"></view>
+    <view class="mini-stat">
+      <view class="mini-label">专注分钟</view>
+      <view class="mini-value">{{todayStats.focusMinutes}}</view>
+    </view>
+    <view class="mini-divider"></view>
+    <view class="mini-stat">
+      <view class="mini-label">正计时分钟</view>
+      <view class="mini-value">{{todayStats.countupMinutes}}</view>
+    </view>
+  </view>
+
+  <view class="timer-card">
+    <view class="timer-ring {{timerRunning ? 'running' : ''}}">
+      <view class="timer-time">{{displayTime}}</view>
+      <view class="timer-status">{{timerStatusText}}</view>
+      <view class="timer-phase">{{timerPhaseText}}</view>
+    </view>
+
+    <view class="task-card" bindtap="onShowTaskSelector">
+      <view class="task-label">当前任务</view>
+      <view class="task-title {{currentTask ? '' : 'is-empty'}}">{{currentTask ? currentTask.title : '点击选择任务'}}</view>
+    </view>
+
+    <view class="preset-group" wx:if="{{viewMode === 'pomodoro'}}">
+      <view class="preset-title">专注时长</view>
+      <view class="preset-chips">
+        <view class="chip {{focusMinutes === 15 ? 'active' : ''}}" data-field="focus" data-minutes="15" bindtap="onDurationPreset">15</view>
+        <view class="chip {{focusMinutes === 20 ? 'active' : ''}}" data-field="focus" data-minutes="20" bindtap="onDurationPreset">20</view>
+        <view class="chip {{focusMinutes === 25 ? 'active' : ''}}" data-field="focus" data-minutes="25" bindtap="onDurationPreset">25</view>
+        <view class="chip {{focusMinutes === 30 ? 'active' : ''}}" data-field="focus" data-minutes="30" bindtap="onDurationPreset">30</view>
+        <view class="chip {{focusMinutes === 45 ? 'active' : ''}}" data-field="focus" data-minutes="45" bindtap="onDurationPreset">45</view>
+        <view class="chip {{focusMinutes === 60 ? 'active' : ''}}" data-field="focus" data-minutes="60" bindtap="onDurationPreset">60</view>
+      </view>
+
+      <view class="preset-title">休息时长</view>
+      <view class="preset-chips">
+        <view class="chip {{breakMinutes === 3 ? 'active' : ''}}" data-field="break" data-minutes="3" bindtap="onDurationPreset">3</view>
+        <view class="chip {{breakMinutes === 5 ? 'active' : ''}}" data-field="break" data-minutes="5" bindtap="onDurationPreset">5</view>
+        <view class="chip {{breakMinutes === 10 ? 'active' : ''}}" data-field="break" data-minutes="10" bindtap="onDurationPreset">10</view>
+        <view class="chip {{breakMinutes === 15 ? 'active' : ''}}" data-field="break" data-minutes="15" bindtap="onDurationPreset">15</view>
+      </view>
+    </view>
+
+    <view class="controls">
+      <button class="btn primary" bindtap="onPrimaryAction">{{primaryLabel}}</button>
+      <button class="btn ghost" bindtap="onSecondaryAction">{{secondaryLabel}}</button>
+    </view>
+  </view>
+
+  <view class="stats-card">
+    <view class="stats-title">今日专注</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <view class="stat-value">{{todayStats.focusCount}}</view>
+        <view class="stat-label">番茄数</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-value">{{todayStats.focusMinutes}}</view>
+        <view class="stat-label">专注分钟</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-value">{{todayStats.countupMinutes}}</view>
+        <view class="stat-label">正计时</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="history-card">
+    <view class="history-title">最近记录</view>
+    <view class="history-list" wx:if="{{sessions.length > 0}}">
+      <view class="history-item" wx:for="{{sessions}}" wx:key="id">
+        <view class="history-left">
+          <view class="history-type">{{item.typeText}}</view>
+          <view class="history-task">{{item.displayTime ? item.displayTime : '未记录时间'}}</view>
+        </view>
+        <view class="history-right">
+          <view class="history-duration">{{item.actual_duration !== null && item.actual_duration !== undefined ? item.actual_duration : item.duration}} 分钟</view>
+          <view class="history-status">{{item.statusText}}</view>
+        </view>
       </view>
     </view>
     <view wx:if="{{sessions.length === 0 && !isLoading && !errorMessage}}" class="empty-state">
       <view class="empty-text">暂无专注记录</view>
-      <view class="empty-hint">开始一次番茄钟后会显示在这里</view>
+      <view class="empty-hint">开始一次专注后会显示在这里</view>
     </view>
   </view>
+
+  <task-selector
+    visible="{{showTaskSelector}}"
+    selectedTaskId="{{currentTask ? currentTask.id : ''}}"
+    bind:confirm="onTaskConfirm"
+    bind:cancel="onTaskCancel"
+  />
 </view>

@@ -27,3 +27,5 @@ class WidgetSummary(BaseModel):
     habits_completed: int
     pomodoro_count: int
     focus_minutes: int
+    countup_count: int
+    countup_minutes: int

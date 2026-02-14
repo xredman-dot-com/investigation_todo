@@ -19,6 +19,8 @@ class Statistic(Base):
     tasks_overdue: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     pomodoro_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     focus_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    countup_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    countup_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     habits_completed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     active_tasks: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 

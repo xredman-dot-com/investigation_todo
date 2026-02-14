@@ -64,6 +64,17 @@ async def daily_stats(
     pomodoro_rows = (await db.execute(pomodoro_stmt)).all()
     pomodoro_map = {row[0]: (row[1], int(row[2] or 0)) for row in pomodoro_rows if row[0] is not None}
 
+    countup_stmt = (
+        select(cast(PomodoroSession.started_at, Date).label("day"), func.count(), func.sum(PomodoroSession.duration))
+        .where(
+            PomodoroSession.user_id == current_user.id,
+            PomodoroSession.type == "countup",
+        )
+        .group_by("day")
+    )
+    countup_rows = (await db.execute(countup_stmt)).all()
+    countup_map = {row[0]: (row[1], int(row[2] or 0)) for row in countup_rows if row[0] is not None}
+
     # Habit logs by date.
     habit_stmt = (
         select(HabitLog.completed_at.label("day"), func.sum(HabitLog.count))
@@ -89,6 +100,7 @@ async def daily_stats(
         active_count = (await db.execute(active_stmt)).scalar_one()
 
         pomodoro_count, focus_minutes = pomodoro_map.get(day, (0, 0))
+        countup_count, countup_minutes = countup_map.get(day, (0, 0))
         habits_completed = habit_map.get(day, 0)
 
         stats.append(
@@ -99,6 +111,8 @@ async def daily_stats(
                 tasks_overdue=overdue_count,
                 pomodoro_count=pomodoro_count,
                 focus_minutes=focus_minutes,
+                countup_count=countup_count,
+                countup_minutes=countup_minutes,
                 habits_completed=habits_completed,
                 active_tasks=active_count,
                 generated_at=datetime.utcnow(),
