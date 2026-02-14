@@ -72,6 +72,13 @@
   <!-- 数据管理 -->
   <view class="section-title">数据管理</view>
   <view class="settings-card card">
+    <view class="setting-item" bindtap="onAdminCenter">
+      <view class="setting-left">
+        <text class="setting-icon">🧰</text>
+        <text class="setting-label">管理中心</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
     <view class="setting-item" bindtap="onBackup">
       <view class="setting-left">
         <text class="setting-icon">☁️</text>

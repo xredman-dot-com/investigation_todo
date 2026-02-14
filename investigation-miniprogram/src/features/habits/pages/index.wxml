@@ -3,7 +3,10 @@
   <status-banner message="正在加载习惯..." wx:if="{{isLoading}}" />
 
   <view class="habit-header">
-    <view class="habit-title">习惯</view>
+    <view class="habit-top">
+      <global-menu inline="{{true}}" />
+      <view class="habit-title">习惯</view>
+    </view>
     <view class="habit-subtitle">让每日打卡更有仪式感</view>
   </view>
 

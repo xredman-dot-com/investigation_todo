@@ -16,6 +16,19 @@
   padding: 16rpx 24rpx;
 }
 
+.calendar-top {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.calendar-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
 /* 视图切换 Tab */
 .view-tabs {
   display: flex;

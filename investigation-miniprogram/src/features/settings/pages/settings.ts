@@ -152,5 +152,9 @@ Page({
 
   onFeedback() {
     wx.showToast({ title: '反馈功能开发中', icon: 'none' })
+  },
+
+  onAdminCenter() {
+    wx.navigateTo({ url: "/features/settings/pages/index" })
   }
 })

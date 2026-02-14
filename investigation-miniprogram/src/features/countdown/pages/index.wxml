@@ -1,6 +1,9 @@
 <view class="page" style="{{themeStyle}}">
   <view class="header">
-    <view class="title">倒数日</view>
+    <view class="header-row">
+      <global-menu inline="{{true}}" />
+      <view class="title">倒数日</view>
+    </view>
     <view class="subtitle">把重要的日子放在前面</view>
   </view>
 

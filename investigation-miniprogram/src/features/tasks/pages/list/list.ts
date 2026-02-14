@@ -122,25 +122,6 @@ Page({
     tasksStore.setState({ activeListId: lists[index]?.id || null })
   },
 
-  onMenu() {
-    wx.showActionSheet({
-      itemList: ['系统设置', '用户中心', '关于'],
-      success: (res) => {
-        switch (res.tapIndex) {
-          case 0:
-            wx.switchTab({ url: '/features/settings/pages/settings' })
-            break
-          case 1:
-            wx.showToast({ title: '用户中心开发中', icon: 'none' })
-            break
-          case 2:
-            wx.showModal({ title: '关于', content: '格物清单 v1.0\n基于滴答清单设计的任务管理小程序' })
-            break
-        }
-      }
-    })
-  },
-
   onRetryLoad() {
     this.loadLists(true)
   },

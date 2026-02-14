@@ -52,10 +52,10 @@
         "selectedIconPath": "assets/icons/tab-pomodoro-active.png"
       },
       {
-        "pagePath": "features/settings/pages/settings",
-        "text": "我的",
-        "iconPath": "assets/icons/tab-me.png",
-        "selectedIconPath": "assets/icons/tab-me-active.png"
+        "pagePath": "features/habits/pages/index",
+        "text": "习惯",
+        "iconPath": "assets/icons/tab-habit.png",
+        "selectedIconPath": "assets/icons/tab-habit-active.png"
       }
     ]
   },

@@ -3,7 +3,10 @@
   <status-banner message="正在加载专注记录..." wx:if="{{isLoading}}" />
 
   <view class="focus-header">
-    <view class="header-title">专注</view>
+    <view class="focus-top">
+      <global-menu inline="{{true}}" />
+      <view class="header-title">专注</view>
+    </view>
     <view class="mode-tabs">
       <view class="mode-tab {{viewMode === 'pomodoro' ? 'active' : ''}}" data-mode="pomodoro" bindtap="onModeChange">番茄计时</view>
       <view class="mode-tab {{viewMode === 'countup' ? 'active' : ''}}" data-mode="countup" bindtap="onModeChange">正计时</view>

@@ -1,0 +1,26 @@
+<view class="menu-root {{inline ? 'inline' : ''}}">
+  <view class="menu-safe-area" wx:if="{{!inline}}"></view>
+  <view class="menu-trigger {{inline ? 'inline' : ''}}" bindtap="toggleMenu">
+    <text class="menu-icon">☰</text>
+  </view>
+
+  <view class="menu-mask" wx:if="{{open}}" bindtap="closeMenu"></view>
+
+  <view class="menu-panel {{open ? 'open' : ''}}">
+    <view class="menu-header">
+      <view class="menu-avatar">👤</view>
+      <view class="menu-user">
+        <view class="menu-name">{{userName}}</view>
+        <view class="menu-desc">个人中心与设置</view>
+      </view>
+    </view>
+
+    <view class="menu-section" wx:for="{{sections}}" wx:key="title">
+      <view class="menu-title">{{item.title}}</view>
+      <view class="menu-item" wx:for="{{item.items}}" wx:for-item="entry" wx:key="label" bindtap="onItemTap" data-url="{{entry.url}}" data-action="{{entry.action}}">
+        <text class="item-icon">{{entry.icon}}</text>
+        <text class="item-label">{{entry.label}}</text>
+      </view>
+    </view>
+  </view>
+</view>

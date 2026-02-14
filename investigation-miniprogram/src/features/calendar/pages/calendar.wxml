@@ -6,6 +6,10 @@
   
   <!-- 顶部导航栏 -->
   <view class="calendar-header">
+    <view class="calendar-top">
+      <global-menu inline="{{true}}" />
+      <view class="calendar-title">日历</view>
+    </view>
     <!-- 视图切换 Tab -->
     <view class="view-tabs">
       <view class="tab-item {{viewMode === 'month' ? 'active' : ''}}" 

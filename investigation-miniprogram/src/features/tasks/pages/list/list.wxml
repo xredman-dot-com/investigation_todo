@@ -4,7 +4,7 @@
   <status-banner message="正在加载任务..." wx:if="{{isLoading}}" />
   <!-- 顶部快速添加 -->
   <view class="header">
-    <view class="menu-btn" bindtap="onMenu">☰</view>
+    <global-menu inline="{{true}}" />
     <quick-add placeholder="添加任务至 {{currentList.name}}" bind:add="onQuickAdd" />
     <view class="search-btn" bindtap="onSearch">
       <text class="search-icon">🔍</text>

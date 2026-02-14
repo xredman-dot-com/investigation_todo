@@ -1,0 +1,128 @@
+/* Global menu styles */
+.menu-root {
+  position: relative;
+  z-index: 1200;
+}
+
+.menu-root.inline {
+  display: flex;
+  align-items: center;
+}
+
+.menu-safe-area {
+  height: env(safe-area-inset-top);
+}
+
+.menu-trigger {
+  position: fixed;
+  top: calc(16rpx + env(safe-area-inset-top));
+  left: 20rpx;
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 50%;
+  background: rgba(15, 16, 18, 0.6);
+  border: 1rpx solid var(--color-border);
+  backdrop-filter: blur(8rpx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-trigger.inline {
+  position: relative;
+  top: auto;
+  left: auto;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.menu-icon {
+  font-size: 32rpx;
+  color: var(--color-text);
+}
+
+.menu-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1100;
+}
+
+.menu-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 72vw;
+  height: 100vh;
+  padding: 32rpx 24rpx 40rpx;
+  background: var(--color-surface);
+  border-right: 1rpx solid var(--color-border);
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  z-index: 1201;
+  overflow-y: auto;
+}
+
+.menu-panel.open {
+  transform: translateX(0);
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.menu-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 20rpx;
+  background: var(--color-surface-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.menu-name {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.menu-desc {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.menu-section {
+  margin-bottom: 20rpx;
+}
+
+.menu-title {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 12rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 10rpx;
+  border-radius: 14rpx;
+}
+
+.menu-item:active {
+  background: var(--color-surface-strong);
+}
+
+.item-icon {
+  font-size: 24rpx;
+}
+
+.item-label {
+  font-size: 26rpx;
+  color: var(--color-text);
+}
