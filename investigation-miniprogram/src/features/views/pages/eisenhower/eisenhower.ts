@@ -1,3 +1,4 @@
+import { initPageTheme } from "../../../../core/themeMixin"
 import { eisenhowerView } from "../../services"
 import type { EisenhowerView } from "../../model"
 import { viewsStore } from "../../../../stores/views"
@@ -9,6 +10,7 @@ Page({
     errorMessage: ""
   },
   onShow() {
+    initPageTheme(this)
     this.fetchView()
   },
   async onPullDownRefresh() {

@@ -1,4 +1,6 @@
 // pages/settings/calendar/calendar.ts
+import { initPageTheme } from "../../../../core/themeMixin"
+
 Page({
   data: {
     defaultView: '月视图',
@@ -10,6 +12,7 @@ Page({
   },
 
   onLoad() {
+    initPageTheme(this)
     this.loadSettings()
   },
 

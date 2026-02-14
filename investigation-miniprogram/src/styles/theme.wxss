@@ -1,19 +1,46 @@
+/* 
+ * 主题系统样式
+ * 
+ * 主题通过 CSS 变量动态控制。
+ * 页面可以通过两种方式应用主题：
+ * 1. 在页面的根元素使用 style="{{themeStyle}}" 绑定动态样式
+ * 2. 直接使用以下 CSS 变量
+ * 
+ * 可用的 CSS 变量：
+ * --color-bg: 页面背景色
+ * --color-surface: 卡片/表面背景色
+ * --color-surface-strong: 强调表面背景色
+ * --color-text: 主文本颜色
+ * --color-text-muted: 次要文本颜色
+ * --color-border: 边框颜色
+ * --color-accent: 强调色（主按钮）
+ * --color-accent-strong: 强调色加强
+ * --color-success: 成功色
+ * --color-warning: 警告色
+ * --color-danger: 危险色
+ * --color-primary: 主题主色
+ * --priority-1 ~ --priority-4: 优先级颜色
+ * --shadow-soft: 柔和阴影
+ * --shadow-fab: 浮动按钮阴影
+ */
+
+/* 页面根元素样式 - 默认主题（会被动态覆盖） */
 page {
+  /* 默认深色主题，会在初始化时被覆盖 */
   --color-bg: #0e0e0f;
   --color-surface: #1a1b1d;
   --color-surface-strong: #222326;
   --color-text: #f4f4f5;
   --color-text-muted: #9ca3af;
+  --color-border: rgba(255, 255, 255, 0.08);
   --color-accent: #ff9d2b;
   --color-accent-strong: #ff7a18;
-  --color-border: rgba(255, 255, 255, 0.08);
   --color-success: #2cb67d;
   --color-warning: #f4b350;
   --color-danger: #ff5c5c;
-  --color-focus: rgba(255, 157, 43, 0.35);
-  --shadow-soft: 0 20rpx 40rpx rgba(0, 0, 0, 0.35);
-  --shadow-fab: 0 18rpx 40rpx rgba(255, 157, 43, 0.35);
-
+  --color-primary: #ff9d2b;
+  
+  /* 兼容旧变量 */
   --primary-color: var(--color-accent);
   --background-color: var(--color-bg);
   --surface-color: var(--color-surface);
@@ -23,18 +50,32 @@ page {
   --success-color: var(--color-success);
   --warning-color: var(--color-warning);
   --danger-color: var(--color-danger);
+  
+  /* 优先级颜色 */
   --priority-1: #ff5c5c;
   --priority-2: #f4b350;
   --priority-3: #6aa3ff;
   --priority-4: #8c93a3;
+  
+  /* 阴影 */
+  --shadow-soft: 0 20rpx 40rpx rgba(0, 0, 0, 0.35);
+  --shadow-fab: 0 18rpx 40rpx rgba(255, 157, 43, 0.35);
+  
+  /* 焦点效果 */
+  --color-focus: rgba(255, 157, 43, 0.35);
+  
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
+/* 页面容器 */
 .page {
   min-height: 100vh;
   background: var(--color-bg);
   color: var(--color-text);
 }
 
+/* 表面卡片 */
 .surface {
   background: var(--color-surface);
   border: 1rpx solid var(--color-border);
@@ -47,15 +88,18 @@ page {
   border-radius: 22rpx;
 }
 
+/* 分割线 */
 .divider {
   height: 1rpx;
   background: var(--color-border);
 }
 
+/* 文字辅助 */
 .muted {
   color: var(--color-text-muted);
 }
 
+/* 徽章 */
 .badge {
   padding: 4rpx 14rpx;
   border-radius: 999rpx;
@@ -64,6 +108,7 @@ page {
   font-size: 22rpx;
 }
 
+/* 优先级标签 */
 .priority-1 {
   background-color: var(--priority-1);
 }
@@ -78,4 +123,25 @@ page {
 
 .priority-4 {
   background-color: var(--priority-4);
+}
+
+/* 主题预览 */
+.theme-preview-default {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+}
+
+.theme-preview-warm {
+  background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+}
+
+.theme-preview-dark {
+  background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+}
+
+.theme-preview-green {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.theme-preview-purple {
+  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
 }

@@ -1,5 +1,5 @@
 <!-- pages/tasks/list/list.wxml -->
-<view class="page fade-in">
+<view class="page fade-in" style="{{themeStyle}}">
   <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="onRetryLoad" />
   <status-banner message="正在加载任务..." wx:if="{{isLoading}}" />
   <!-- 顶部快速添加 -->

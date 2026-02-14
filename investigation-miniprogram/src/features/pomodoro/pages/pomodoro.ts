@@ -1,4 +1,6 @@
 // pages/pomodoro/pomodoro.ts
+import { initPageTheme } from "../../../core/themeMixin"
+
 Page({
   data: {
     timerRunning: false,
@@ -15,6 +17,7 @@ Page({
   },
 
   onLoad() {
+    initPageTheme(this)
     this.startTimer()
   },
 

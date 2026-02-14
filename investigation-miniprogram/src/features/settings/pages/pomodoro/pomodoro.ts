@@ -1,4 +1,6 @@
 // pages/settings/pomodoro/pomodoro.ts
+import { initPageTheme } from "../../../../core/themeMixin"
+
 Page({
   data: {
     focusTime: 25,
@@ -11,6 +13,7 @@ Page({
   },
 
   onLoad() {
+    initPageTheme(this)
     this.loadSettings()
   },
 

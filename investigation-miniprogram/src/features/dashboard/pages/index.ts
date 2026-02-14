@@ -1,6 +1,7 @@
 import { widgetSummary } from "../services"
 import type { WidgetSummary } from "../model"
 import { dashboardStore } from "../../../stores/dashboard"
+import { initPageTheme } from "../../../core/themeMixin"
 
 Page({
   data: {
@@ -19,6 +20,8 @@ Page({
     ]
   },
   onShow() {
+    // 初始化主题
+    initPageTheme(this)
     this.fetchSummary()
   },
   async onPullDownRefresh() {

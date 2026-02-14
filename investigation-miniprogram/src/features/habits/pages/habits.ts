@@ -1,4 +1,6 @@
 // pages/habits/habits.ts
+import { initPageTheme } from "../../../core/themeMixin"
+
 Page({
   data: {
     habits: [] as any[],
@@ -11,6 +13,7 @@ Page({
   },
 
   onLoad() {
+    initPageTheme(this)
     this.loadHabits()
   },
 

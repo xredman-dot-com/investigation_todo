@@ -1,3 +1,4 @@
+import { initPageTheme } from "../../../core/themeMixin"
 import { dailyStats } from "../services"
 import type { DailyStat } from "../model"
 import { statisticsStore } from "../../../stores/statistics"
@@ -18,6 +19,7 @@ Page({
     errorMessage: ""
   },
   onLoad() {
+    initPageTheme(this)
     const today = new Date()
     const start = new Date(today)
     start.setDate(today.getDate() - 7)

@@ -1,3 +1,4 @@
+import { initPageTheme } from "../../../core/themeMixin"
 import { createPomodoroSession, listPomodoroSessions, updatePomodoroSession } from "../services"
 import type { PomodoroSession } from "../model"
 import { pomodoroStore } from "../../../stores/pomodoro"
@@ -12,6 +13,7 @@ Page({
     errorMessage: ""
   },
   onShow() {
+    initPageTheme(this)
     this.fetchSessions()
   },
   async onPullDownRefresh() {

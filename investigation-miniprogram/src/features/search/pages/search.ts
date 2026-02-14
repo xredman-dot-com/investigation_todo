@@ -1,4 +1,5 @@
 // pages/search/search.ts
+import { initPageTheme } from "../../../core/themeMixin"
 import { listTasks, listLists } from '../services'
 import { searchStore } from "../../../stores/search"
 
@@ -15,6 +16,7 @@ Page({
   },
 
   onLoad() {
+    initPageTheme(this)
     this.loadSearchHistory()
   },
 

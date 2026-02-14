@@ -1,7 +1,7 @@
 /* pages/settings/settings.wxss */
 .page {
   min-height: 100vh;
-  background-color: var(--background-color);
+  background-color: var(--color-bg);
   padding-bottom: 24rpx;
 }
 
@@ -10,8 +10,9 @@
   align-items: center;
   margin: 24rpx;
   padding: 32rpx;
-  background-color: var(--surface-color);
+  background-color: var(--color-surface);
   border-radius: 16rpx;
+  border: 1rpx solid var(--color-border);
 }
 
 .profile-avatar {
@@ -21,7 +22,7 @@
   align-items: center;
   justify-content: center;
   font-size: 64rpx;
-  background-color: var(--background-color);
+  background-color: var(--color-surface-strong);
   border-radius: 50%;
   margin-right: 24rpx;
 }
@@ -33,32 +34,33 @@
 .profile-name {
   font-size: 36rpx;
   font-weight: bold;
-  color: var(--text-color);
+  color: var(--color-text);
   margin-bottom: 8rpx;
 }
 
 .profile-email {
   font-size: 28rpx;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
 }
 
 .profile-action {
   font-size: 48rpx;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
 }
 
 .section-title {
   font-size: 26rpx;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   margin: 32rpx 24rpx 16rpx;
   padding-left: 8rpx;
 }
 
 .settings-card {
   margin: 0 24rpx;
-  background-color: var(--surface-color);
+  background-color: var(--color-surface);
   border-radius: 16rpx;
   overflow: hidden;
+  border: 1rpx solid var(--color-border);
 }
 
 .setting-item {
@@ -66,7 +68,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 32rpx;
-  border-bottom: 1rpx solid var(--border-color);
+  border-bottom: 1rpx solid var(--color-border);
 }
 
 .setting-item:last-child {
@@ -86,16 +88,16 @@
 
 .setting-label {
   font-size: 32rpx;
-  color: var(--text-color);
+  color: var(--color-text);
 }
 
 .setting-arrow {
   font-size: 40rpx;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
 }
 
 .setting-item.danger .setting-label {
-  color: var(--danger-color);
+  color: var(--color-danger);
 }
 
 .theme-grid {
@@ -112,10 +114,11 @@
   padding: 16rpx;
   margin-bottom: 16rpx;
   border-radius: 12rpx;
+  transition: background-color 0.2s;
 }
 
 .theme-item.active {
-  background-color: var(--background-color);
+  background-color: var(--color-surface-strong);
 }
 
 .theme-preview {
@@ -124,33 +127,40 @@
   border-radius: 50%;
   margin-bottom: 12rpx;
   border: 4rpx solid transparent;
+  transition: border-color 0.2s;
 }
 
 .theme-item.active .theme-preview {
-  border-color: var(--primary-color);
+  border-color: var(--color-accent);
 }
 
-.theme-preview.default {
+/* 使用 theme.wxss 中定义的预览类 */
+.theme-preview.default,
+.theme-preview-default {
   background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
 }
 
-.theme-preview.warm {
+.theme-preview.warm,
+.theme-preview-warm {
   background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
 }
 
-.theme-preview.dark {
+.theme-preview.dark,
+.theme-preview-dark {
   background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
 }
 
-.theme-preview.green {
+.theme-preview.green,
+.theme-preview-green {
   background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
 }
 
-.theme-preview.purple {
+.theme-preview.purple,
+.theme-preview-purple {
   background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
 }
 
 .theme-name {
   font-size: 24rpx;
-  color: var(--text-color);
+  color: var(--color-text);
 }

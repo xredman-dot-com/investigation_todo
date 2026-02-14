@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container" style="{{themeStyle}}">
   <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchSessions" />
   <status-banner message="正在加载专注记录..." wx:if="{{isLoading}}" />
   <view class="section card">

@@ -1,6 +1,7 @@
 // pages/settings/settings.ts
-import { getTheme, setTheme, applyTheme, ThemeName } from '../../../core/theme'
+import { setTheme, getTheme, ThemeName, THEMES, Theme } from '../../../core/theme'
 import { settingsStore } from "../../../stores/settings"
+import { initPageTheme } from '../../../core/themeMixin'
 
 Page({
   data: {
@@ -9,18 +10,41 @@ Page({
       email: ''
     },
     currentTheme: 'default' as ThemeName,
-    darkMode: false
+    darkMode: false,
+    themeStyle: '',
+    // 主题列表供模板渲染
+    themeList: [
+      { name: 'default' as ThemeName, label: '默认蓝', class: 'default' },
+      { name: 'warm' as ThemeName, label: '暖色橙', class: 'warm' },
+      { name: 'dark' as ThemeName, label: '暗夜黑', class: 'dark' },
+      { name: 'green' as ThemeName, label: '清新绿', class: 'green' },
+      { name: 'purple' as ThemeName, label: '优雅紫', class: 'purple' },
+    ]
   },
 
   onLoad() {
-    const app = getApp<IAppOption>()
+    // 初始化页面主题
+    initPageTheme(this)
+    
+    // 加载当前主题设置
+    const theme = getTheme()
     this.setData({
-      currentTheme: app.globalData.theme.name,
-      darkMode: app.globalData.theme.name === 'dark'
+      currentTheme: theme.name,
+      darkMode: theme.isDark
     })
 
-    // Load user info
+    // 加载用户信息
     this.loadUserInfo()
+  },
+
+  onShow() {
+    // 每次显示页面时刷新主题
+    const theme = getTheme()
+    this.setData({
+      currentTheme: theme.name,
+      darkMode: theme.isDark
+    })
+    initPageTheme(this)
   },
 
   loadUserInfo() {
@@ -43,18 +67,25 @@ Page({
     const { theme } = e.currentTarget.dataset
     const newTheme = theme as ThemeName
 
-    setTheme(newTheme)
-    applyTheme(getTheme())
+    if (!THEMES[newTheme]) {
+      console.warn(`Unknown theme: ${newTheme}`)
+      return
+    }
 
-    const app = getApp<IAppOption>()
-    app.globalData.theme = getTheme()
+    // 应用新主题
+    setTheme(newTheme)
+    
+    // 刷新当前页面样式
+    initPageTheme(this)
 
     this.setData({
       currentTheme: newTheme,
-      darkMode: newTheme === 'dark'
+      darkMode: THEMES[newTheme].isDark
     })
 
     wx.showToast({ title: '主题已切换', icon: 'success' })
+    
+    console.log(`[Settings] Theme changed to: ${newTheme}`)
   },
 
   onDarkModeChange(e: WechatMiniprogram.CustomEvent) {
@@ -62,15 +93,14 @@ Page({
     const theme: ThemeName = checked ? 'dark' : 'default'
 
     setTheme(theme)
-    applyTheme(getTheme())
-
-    const app = getApp<IAppOption>()
-    app.globalData.theme = getTheme()
+    initPageTheme(this)
 
     this.setData({
       currentTheme: theme,
       darkMode: checked
     })
+    
+    wx.showToast({ title: checked ? '深色模式已开启' : '深色模式已关闭', icon: 'success' })
   },
 
   onSetting(e: WechatMiniprogram.CustomEvent) {

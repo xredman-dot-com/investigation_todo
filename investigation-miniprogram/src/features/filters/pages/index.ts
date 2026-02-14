@@ -1,3 +1,4 @@
+import { initPageTheme } from "../../../core/themeMixin"
 import { createFilter, deleteFilter, filterTasks, listFilters } from "../services"
 import type { FilterItem, TaskItem } from "../model"
 import { filtersStore } from "../../../stores/filters"
@@ -24,6 +25,7 @@ Page({
     statusOptions
   },
   onShow() {
+    initPageTheme(this)
     this.fetchFilters()
   },
   async onPullDownRefresh() {

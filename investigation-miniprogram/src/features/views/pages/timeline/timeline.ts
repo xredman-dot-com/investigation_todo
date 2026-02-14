@@ -1,3 +1,4 @@
+import { initPageTheme } from "../../../../core/themeMixin"
 import { timelineView } from "../../services"
 import type { TimelineBucket } from "../../model"
 import { viewsStore } from "../../../../stores/views"
@@ -18,6 +19,7 @@ Page({
     errorMessage: ""
   },
   onLoad() {
+    initPageTheme(this)
     const today = new Date()
     const start = new Date(today)
     start.setDate(today.getDate() - 7)

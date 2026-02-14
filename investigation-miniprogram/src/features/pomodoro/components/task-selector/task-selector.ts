@@ -1,5 +1,5 @@
 // components/task-selector/task-selector.ts
-import { listTasks } from '../../services'
+import { listTasks } from '../../../tasks/services'
 
 interface TaskItem {
   id: string

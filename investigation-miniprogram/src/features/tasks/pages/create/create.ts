@@ -1,4 +1,5 @@
 // pages/tasks/create/create.ts
+import { initPageTheme } from "../../../../core/themeMixin"
 import { createTask, listLists } from '../../services'
 import type { ListItem } from '../../model'
 import { tasksStore } from "../../../../stores/tasks"
@@ -22,6 +23,7 @@ Page({
   },
 
   onLoad(options: Record<string, string>) {
+    initPageTheme(this)
     const listId = options.listId || ''
     this.setData({ listId })
     this.loadLists(listId)

@@ -1,4 +1,6 @@
 // pages/settings/notification/notification.ts
+import { initPageTheme } from "../../../../core/themeMixin"
+
 Page({
   data: {
     taskReminderEnabled: true,
@@ -11,6 +13,7 @@ Page({
   },
 
   onLoad() {
+    initPageTheme(this)
     this.loadSettings()
   },
 

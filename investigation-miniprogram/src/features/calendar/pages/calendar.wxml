@@ -1,52 +1,165 @@
 <!-- pages/calendar/calendar.wxml -->
-<view class="page">
-  <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="loadTasksForDate" />
-  <status-banner message="正在加载日历..." wx:if="{{isLoading}}" />
-  <!-- 顶部Tab切换 -->
-  <view class="tab-switch">
-    <view class="tab-item {{viewMode === 'month' ? 'active' : ''}}" bindtap="onMonthView">月</view>
-    <view class="tab-item {{viewMode === 'week' ? 'active' : ''}}" bindtap="onWeekView">周</view>
-    <view class="tab-item {{viewMode === 'day' ? 'active' : ''}}" bindtap="onDayView">日</view>
+<!-- 参考滴答清单设计：日/周/月三视图 -->
+<view class="page" style="{{themeStyle}}">
+  
+  <!-- 顶部导航栏 -->
+  <view class="calendar-header">
+    <!-- 视图切换 Tab -->
+    <view class="view-tabs">
+      <view class="tab-item {{viewMode === 'month' ? 'active' : ''}}" 
+            bindtap="onViewModeChange" 
+            data-mode="month">月</view>
+      <view class="tab-item {{viewMode === 'week' ? 'active' : ''}}" 
+            bindtap="onViewModeChange" 
+            data-mode="week">周</view>
+      <view class="tab-item {{viewMode === 'day' ? 'active' : ''}}" 
+            bindtap="onViewModeChange" 
+            data-mode="day">日</view>
+    </view>
+    
+    <!-- 日期导航 -->
+    <view class="date-nav">
+      <view class="nav-btn" bindtap="onPrevPage">‹</view>
+      <view class="current-date-title">
+        <block wx:if="{{viewMode === 'month'}}">{{currentMonthTitle}}</block>
+        <block wx:if="{{viewMode === 'week'}}">{{weekRangeTitle}}</block>
+        <block wx:if="{{viewMode === 'day'}}">{{currentMonthTitle}}</block>
+      </view>
+      <view class="nav-btn" bindtap="onNextPage">›</view>
+    </view>
+    
+    <!-- 今天按钮 -->
+    <view class="today-btn" bindtap="onGoToday">今天</view>
   </view>
 
-  <!-- 日期导航 -->
-  <view class="date-nav">
-    <view class="nav-btn" bindtap="onPrevMonth">‹</view>
-    <view class="current-date">{{currentMonth}}</view>
-    <view class="nav-btn" bindtap="onNextMonth">›</view>
+  <!-- 星期标题栏 -->
+  <view class="weekday-header" wx:if="{{viewMode !== 'day'}}">
+    <view class="weekday-item" wx:for="{{weekDays}}" wx:key="*this">{{item}}</view>
   </view>
 
-  <!-- 日历网格 -->
-  <view class="calendar-grid">
-    <view class="weekday" wx:for="{{weekdays}}" wx:key="*this">{{item}}</view>
-    <view class="calendar-days">
-      <view class="day-cell" wx:for="{{days}}" wx:key="*this">
-        <view class="day-number {{item.isToday ? 'today' : ''}}">{{item.date}}</view>
-        <view class="task-dots">
-          <view class="task-dot" wx:for="{{item.tasks}}" wx:key="*this"></view>
+  <!-- 月视图 -->
+  <view class="month-view" wx:if="{{viewMode === 'month'}}">
+    <view class="month-week" wx:for="{{monthDays}}" wx:key="weekIndex" wx:for-index="weekIndex">
+      <view class="month-day {{item.isCurrentMonth ? '' : 'other-month'}} {{item.isToday ? 'today' : ''}} {{item.fullDate === selectedDate ? 'selected' : ''}}"
+            wx:for="{{item}}" 
+            wx:key="fullDate"
+            bindtap="onDayTap"
+            data-full-date="{{item.fullDate}}">
+        <view class="day-number">{{item.date}}</view>
+        <!-- 任务点 -->
+        <view class="task-dots" wx:if="{{item.tasks.length > 0}}">
+          <view class="task-dot priority-{{task.priority}}" wx:for="{{item.tasks.slice(0, 4)}}" wx:for-item="task" wx:key="id"></view>
+        </view>
+        <!-- 任务数量 -->
+        <view class="task-count" wx:if="{{item.tasks.length > 0}}">{{item.tasks.length}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 周视图 -->
+  <view class="week-view" wx:if="{{viewMode === 'week'}}">
+    <view class="week-days">
+      <view class="week-day {{item.isToday ? 'today' : ''}} {{item.fullDate === selectedDate ? 'selected' : ''}}"
+            wx:for="{{weekDaysList}}" 
+            wx:key="fullDate"
+            bindtap="onDayTap"
+            data-full-date="{{item.fullDate}}">
+        <view class="week-day-header">
+          <view class="week-day-number">{{item.date}}</view>
+          <view class="week-day-week">{{weekDays[index]}}</view>
+        </view>
+        <view class="week-day-tasks">
+          <view class="week-task-item priority-{{task.priority}}" 
+                wx:for="{{item.tasks}}" 
+                wx:for-item="task" 
+                wx:key="id"
+                bindtap="onTaskTap"
+                data-task-id="{{task.id}}">
+            <view class="task-time" wx:if="{{task.due_time}}">{{task.due_time}}</view>
+            <view class="task-title">{{task.title}}</view>
+          </view>
+          <view class="week-task-empty" wx:if="{{item.tasks.length === 0}}">无任务</view>
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 当天任务 -->
-  <view class="day-tasks" wx:if="{{todayTasks.length > 0}}">
-    <view class="section-title">今天 {{todayDate}} ({{todayTasks.length}}个任务)</view>
-    <view class="task-list">
-      <view class="task-item" wx:for="{{todayTasks}}" wx:key="id">
-        <view class="task-priority priority-{{item.priority}}"></view>
-        <view class="task-info">
-          <view class="task-title">{{item.title}}</view>
-          <view class="task-meta">
-            <text wx:if="{{item.due_time}}">⏰ {{item.due_time}}</text>
-            <text wx:if="{{item.list_name}}">📋 {{item.list_name}}</text>
+  <!-- 日视图 -->
+  <view class="day-view" wx:if="{{viewMode === 'day'}}">
+    <!-- 全天任务 -->
+    <view class="day-all-day">
+      <view class="all-day-label">全天</view>
+      <view class="all-day-tasks">
+        <view class="all-day-task" 
+              wx:for="{{dayTasks.filter(t => !t.due_time)}}" 
+              wx:for-item="task" 
+              wx:key="id"
+              bindtap="onTaskTap"
+              data-task-id="{{task.id}}">
+          <view class="task-priority-dot priority-{{task.priority}}"></view>
+          <view class="task-title">{{task.title}}</view>
+        </view>
+        <view class="all-day-empty" wx:if="{{dayTasks.filter(t => !t.due_time).length === 0}}">无全天任务</view>
+      </view>
+    </view>
+    
+    <!-- 时间轴 -->
+    <view class="day-timeline">
+      <view class="time-slot" wx:for="{{[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]}}" wx:key="*this">
+        <view class="time-label">{{item}}:00</view>
+        <view class="time-content">
+          <view class="time-task" 
+                wx:for="{{dayTasks}}" 
+                wx:for-item="task" 
+                wx:key="id"
+                wx:if="{{task.due_time && task.due_time.startsWith((item < 10 ? '0' + item : '' + item) + ':')}}"
+                bindtap="onTaskTap"
+                data-task-id="{{task.id}}">
+            <view class="task-priority-dot priority-{{task.priority}}"></view>
+            <view class="task-title">{{task.title}}</view>
+            <view class="task-time">{{task.due_time}}</view>
           </view>
         </view>
       </view>
     </view>
   </view>
-  <view wx:if="{{todayTasks.length === 0 && !isLoading && !errorMessage}}" class="empty-state">
-    <view class="empty-text">今天没有任务</view>
-    <view class="empty-hint">在任务页新建或调整日期</view>
+
+  <!-- 底部选中日期任务列表 -->
+  <view class="selected-tasks-panel" wx:if="{{viewMode === 'month' || viewMode === 'week'}}">
+    <view class="panel-header">
+      <view class="panel-title">{{selectedDateTitle}} ({{selectedDateTasks.length}}个任务)</view>
+      <view class="add-btn" bindtap="onAddTask">+ 添加</view>
+    </view>
+    <scroll-view class="task-list" scroll-y>
+      <view class="task-item" 
+            wx:for="{{selectedDateTasks}}" 
+            wx:key="id"
+            bindtap="onTaskTap"
+            data-task-id="{{item.id}}">
+        <view class="task-priority priority-{{item.priority}}"></view>
+        <view class="task-content">
+          <view class="task-title">{{item.title}}</view>
+          <view class="task-meta">
+            <text wx:if="{{item.due_time}}">⏰ {{item.due_time}}</text>
+            <text wx:if="{{item.list_name}}">📋 {{item.list_name}}</text>
+            <text wx:if="{{item.tags && item.tags.length}}">🏷️ {{item.tags.join(', ')}}</text>
+          </view>
+        </view>
+        <view class="task-status {{item.status}}">{{item.status === 'done' ? '✓' : ''}}</view>
+      </view>
+      <view class="empty-state" wx:if="{{selectedDateTasks.length === 0}}">
+        <view class="empty-text">该日期暂无任务</view>
+        <view class="empty-hint">点击右上角添加任务</view>
+      </view>
+    </scroll-view>
   </view>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab" bindtap="onAddTask">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 状态提示 -->
+  <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="loadCalendarData" />
+  <status-banner message="正在加载..." wx:if="{{isLoading}}" />
 </view>

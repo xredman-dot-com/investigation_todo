@@ -5,14 +5,16 @@ declare const wx: any
 
 type ThemeName = 'default' | 'warm' | 'dark' | 'green' | 'purple'
 
-interface Theme {
-  name: ThemeName
+interface ThemeColors {
   primary: string
   background: string
   surface: string
+  surfaceStrong: string
   text: string
   textSecondary: string
   border: string
+  accent: string
+  accentStrong: string
   success: string
   warning: string
   danger: string
@@ -20,6 +22,13 @@ interface Theme {
   priority2: string
   priority3: string
   priority4: string
+}
+
+interface Theme {
+  name: ThemeName
+  label: string
+  isDark: boolean
+  colors: ThemeColors
 }
 
 interface IAppOption {

@@ -1,6 +1,7 @@
 import { createHabit, createHabitLog, deleteHabit, listHabitLogs, listHabits } from "../services"
 import type { HabitItem, HabitLogItem } from "../model"
 import { habitsStore } from "../../../stores/habits"
+import { initPageTheme } from "../../../core/themeMixin"
 
 function formatDate(value: Date): string {
   const year = value.getFullYear()
@@ -22,6 +23,8 @@ Page({
     }
   },
   onShow() {
+    // 初始化主题
+    initPageTheme(this)
     this.fetchHabits()
   },
   async onPullDownRefresh() {

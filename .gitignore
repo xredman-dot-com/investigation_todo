@@ -21,6 +21,9 @@ dist-ssr/
 build/
 *.local
 
+# Miniprogram compiled JS (keep TS as source of truth)
+investigation-miniprogram/src/**/*.js
+
 # Environment files
 .env
 .env.*

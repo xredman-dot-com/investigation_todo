@@ -1,4 +1,5 @@
 // pages/tasks/detail/detail.ts
+import { initPageTheme } from "../../../../core/themeMixin"
 import { getTask, updateTask, deleteTask, listSubtasks } from '../../services'
 import type { TaskItem } from '../../model'
 import { tasksStore } from "../../../../stores/tasks"
@@ -17,6 +18,7 @@ Page({
   },
 
   async onLoad(options: Record<string, string>) {
+    initPageTheme(this)
     const { id } = options
     if (!id) {
       wx.showToast({ title: '参数错误', icon: 'none' })

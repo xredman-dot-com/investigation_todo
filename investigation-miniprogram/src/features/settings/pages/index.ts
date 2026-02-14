@@ -1,3 +1,4 @@
+import { initPageTheme } from "../../../core/themeMixin"
 import { exportFull, listLists, createList, updateList, deleteList, dispatchReminders, listReminderLogs, getMe } from "../services"
 import type { UserProfile } from "../services"
 import type { ListItem, SubscriptionMessage } from "../model"
@@ -13,6 +14,7 @@ Page({
     reminderLogs: [] as SubscriptionMessage[]
   },
   onShow() {
+    initPageTheme(this)
     this.bootstrap()
   },
   async onPullDownRefresh() {

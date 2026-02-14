@@ -1,5 +1,5 @@
 <!-- pages/settings/settings.wxml -->
-<view class="page">
+<view class="page" style="{{themeStyle}}">
   <!-- 用户信息卡片 -->
   <view class="profile-card card">
     <view class="profile-avatar">👤</view>
@@ -16,25 +16,15 @@
   <view class="section-title">主题设置</view>
   <view class="settings-card card">
     <view class="theme-grid">
-      <view class="theme-item {{currentTheme === 'default' ? 'active' : ''}}" bindtap="onThemeChange" data-theme="default">
-        <view class="theme-preview default"></view>
-        <view class="theme-name">默认蓝</view>
-      </view>
-      <view class="theme-item {{currentTheme === 'warm' ? 'active' : ''}}" bindtap="onThemeChange" data-theme="warm">
-        <view class="theme-preview warm"></view>
-        <view class="theme-name">暖色橙</view>
-      </view>
-      <view class="theme-item {{currentTheme === 'dark' ? 'active' : ''}}" bindtap="onThemeChange" data-theme="dark">
-        <view class="theme-preview dark"></view>
-        <view class="theme-name">暗夜黑</view>
-      </view>
-      <view class="theme-item {{currentTheme === 'green' ? 'active' : ''}}" bindtap="onThemeChange" data-theme="green">
-        <view class="theme-preview green"></view>
-        <view class="theme-name">清新绿</view>
-      </view>
-      <view class="theme-item {{currentTheme === 'purple' ? 'active' : ''}}" bindtap="onThemeChange" data-theme="purple">
-        <view class="theme-preview purple"></view>
-        <view class="theme-name">优雅紫</view>
+      <view 
+        wx:for="{{themeList}}" 
+        wx:key="name"
+        class="theme-item {{currentTheme === item.name ? 'active' : ''}}" 
+        bindtap="onThemeChange" 
+        data-theme="{{item.name}}"
+      >
+        <view class="theme-preview theme-preview-{{item.class}}"></view>
+        <view class="theme-name">{{item.label}}</view>
       </view>
     </view>
   </view>
@@ -54,7 +44,7 @@
         <text class="setting-icon">🌙</text>
         <text class="setting-label">深色模式</text>
       </view>
-      <switch checked="{{darkMode}}" bindchange="onDarkModeChange" />
+      <switch checked="{{darkMode}}" bindchange="onDarkModeChange" color="var(--color-accent)" />
     </view>
     <view class="setting-item" bindtap="onSetting" data-index="{{2}}">
       <view class="setting-left">

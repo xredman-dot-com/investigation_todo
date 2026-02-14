@@ -1,4 +1,6 @@
 // pages/habits/detail/detail.ts
+import { initPageTheme } from "../../../../core/themeMixin"
+
 Page({
   data: {
     habitId: '',
@@ -10,6 +12,7 @@ Page({
   },
 
   onLoad(options: Record<string, string>) {
+    initPageTheme(this)
     const { id } = options
     if (!id) {
       wx.showToast({ title: '参数错误', icon: 'none' })

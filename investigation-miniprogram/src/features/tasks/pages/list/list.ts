@@ -2,6 +2,7 @@
 import { listTasks, updateTask, deleteTask, createTask, listLists } from '../../services'
 import type { TaskItem, ListItem } from '../../model'
 import { tasksStore } from "../../../../stores/tasks"
+import { initPageTheme } from '../../../../core/themeMixin'
 
 interface TaskGroup {
   todo: TaskItem[]
@@ -26,7 +27,14 @@ Page({
   },
 
   async onLoad() {
+    // 初始化主题
+    initPageTheme(this)
     await this.loadLists()
+  },
+  
+  onShow() {
+    // 页面显示时刷新主题
+    initPageTheme(this)
   },
 
   applyStoreState(lists: ListItem[], tasksByListId: Record<string, TaskItem[]>, activeListId: string | null) {

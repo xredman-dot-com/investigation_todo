@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container" style="{{themeStyle}}">
   <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchTimeline" />
   <status-banner message="正在加载时间线..." wx:if="{{isLoading}}" />
   <view class="section card">

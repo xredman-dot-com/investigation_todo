@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container" style="{{themeStyle}}">
   <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="onRetryLoad" />
   <status-banner message="正在加载概览..." wx:if="{{loading}}" />
   <view class="empty-state" wx:if="{{!loading && !errorMessage && !summary}}">
