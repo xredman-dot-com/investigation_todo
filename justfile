@@ -11,6 +11,9 @@ backend-install:
 backend-migrate:
   cd investigation-backend && uv run -m alembic upgrade head
 
+db-upgrade:
+  cd investigation-backend && uv run -m alembic upgrade head
+
 admin:
   cd investigation-admin && if [ ! -d node_modules ]; then npm install; fi
   cd investigation-admin && npm run dev

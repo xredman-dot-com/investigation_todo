@@ -1,4 +1,5 @@
 from src.models.attachment import Attachment
+from src.models.countdown import Countdown
 from src.models.filter import Filter
 from src.models.habit import Habit
 from src.models.habit_log import HabitLog
@@ -15,6 +16,7 @@ from src.models.user import User
 
 __all__ = [
     "Attachment",
+    "Countdown",
     "Filter",
     "Habit",
     "HabitLog",

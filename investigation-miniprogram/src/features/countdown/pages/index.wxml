@@ -1,4 +1,6 @@
 <view class="page" style="{{themeStyle}}">
+  <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchItems" />
+  <status-banner message="正在加载倒数日..." wx:if="{{isLoading}}" />
   <view class="header">
     <view class="header-row">
       <global-menu inline="{{true}}" />
@@ -39,6 +41,10 @@
         <view class="card-main">
           <view class="card-title">{{item.title}}</view>
           <view class="card-date">{{item.displayDate}}</view>
+          <view class="card-tags">
+            <view class="tag {{item.typeClass}}">{{item.typeLabel}}</view>
+            <view class="tag ghost">{{item.calendarLabel}}</view>
+          </view>
           <view class="card-badge">{{item.badgeText}}</view>
         </view>
         <view class="card-right">
@@ -65,10 +71,20 @@
       <view class="sheet-close" bindtap="closeForm">×</view>
     </view>
     <view class="sheet-body">
+      <view class="chip-row">
+        <view class="chip {{form.type === 'birthday' ? 'active' : ''}}" data-value="birthday" bindtap="onTypeSelect">生日</view>
+        <view class="chip {{form.type === 'anniversary' ? 'active' : ''}}" data-value="anniversary" bindtap="onTypeSelect">纪念日</view>
+        <view class="chip {{form.type === 'countdown' ? 'active' : ''}}" data-value="countdown" bindtap="onTypeSelect">倒数日</view>
+        <view class="chip {{form.type === 'festival' ? 'active' : ''}}" data-value="festival" bindtap="onTypeSelect">节日</view>
+      </view>
+      <view class="chip-row">
+        <view class="chip {{form.calendarType === 'solar' ? 'active' : ''}}" data-value="solar" bindtap="onCalendarSelect">公历</view>
+        <view class="chip {{form.calendarType === 'lunar' ? 'active' : ''}}" data-value="lunar" bindtap="onCalendarSelect">农历</view>
+      </view>
       <input class="input" placeholder="例如：毕业 / 旅行" value="{{form.title}}" bindinput="onTitleInput" />
       <picker mode="date" value="{{form.date}}" bindchange="onDateChange">
         <view class="date-picker {{form.date ? '' : 'placeholder'}}">
-          {{form.date ? form.date : '选择日期'}}
+          {{form.date ? form.date : (form.calendarType === 'lunar' ? '选择农历日期' : '选择公历日期')}}
         </view>
       </picker>
       <button class="btn primary" bindtap="addItem">添加</button>

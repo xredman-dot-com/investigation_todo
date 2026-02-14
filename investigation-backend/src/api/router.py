@@ -4,6 +4,7 @@ from src.api.routes import (
     admin,
     attachments,
     auth,
+    countdowns,
     exports,
     filters,
     habits,
@@ -33,6 +34,7 @@ api_router.include_router(reminders.router, tags=["reminders"])
 api_router.include_router(reminder_jobs.router, tags=["reminders"])
 api_router.include_router(views.router, tags=["views"])
 api_router.include_router(pomodoro.router, tags=["pomodoro"])
+api_router.include_router(countdowns.router, tags=["countdowns"])
 api_router.include_router(habits.router, tags=["habits"])
 api_router.include_router(statistics.router, tags=["statistics"])
 api_router.include_router(widgets.router, tags=["widgets"])

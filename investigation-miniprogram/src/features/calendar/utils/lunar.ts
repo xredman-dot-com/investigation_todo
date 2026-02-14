@@ -24,7 +24,7 @@ const dayNames = [
   "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"
 ]
 
-type LunarDate = {
+export type LunarDate = {
   year: number
   month: number
   day: number
@@ -110,6 +110,10 @@ function solarToLunar(date: Date): LunarDate | null {
 
   const lunarDay = offset + 1
   return { year: lunarYear, month: lunarMonth, day: lunarDay, isLeap }
+}
+
+export function getLunarDate(date: Date): LunarDate | null {
+  return solarToLunar(date)
 }
 
 export function getLunarText(date: Date): string {

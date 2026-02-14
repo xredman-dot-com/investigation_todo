@@ -135,6 +135,19 @@ export type PomodoroSession = {
   created_at: string
 }
 
+export type CountdownItem = {
+  id: string
+  user_id: string
+  title: string
+  target_date: string
+  type: string
+  calendar_type: string
+  lunar_month?: number | null
+  lunar_day?: number | null
+  created_at: string
+  updated_at: string
+}
+
 export type DailyStat = {
   stat_date: string
   tasks_created: number

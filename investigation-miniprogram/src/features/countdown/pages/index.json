@@ -2,6 +2,7 @@
   "navigationBarTitleText": "倒数日",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "global-menu": "/shared/components/global-menu/global-menu"
+    "global-menu": "/shared/components/global-menu/global-menu",
+    "status-banner": "/shared/components/status-banner/status-banner"
   }
 }
