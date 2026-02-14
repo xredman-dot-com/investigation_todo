@@ -67,6 +67,13 @@
   text-align: center;
 }
 
+.lunar-title {
+  margin-top: 8rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
 .today-btn {
   position: absolute;
   right: 24rpx;
@@ -139,6 +146,12 @@
 .day-number {
   font-size: 26rpx;
   color: var(--color-text);
+  margin-bottom: 8rpx;
+}
+
+.lunar-text {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
   margin-bottom: 8rpx;
 }
 
@@ -223,6 +236,12 @@
 
 .week-day-week {
   font-size: 22rpx;
+  color: var(--color-text-muted);
+  margin-top: 4rpx;
+}
+
+.week-day-lunar {
+  font-size: 20rpx;
   color: var(--color-text-muted);
   margin-top: 4rpx;
 }

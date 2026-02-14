@@ -4,6 +4,7 @@ import { initPageTheme } from "../../../core/themeMixin"
 import { listTasks } from '../services'
 import type { TaskItem } from '../model'
 import { calendarStore } from "../../../stores/calendar"
+import { getLunarText } from "../utils/lunar"
 
 type ViewMode = 'month' | 'week' | 'day'
 
@@ -12,6 +13,7 @@ interface DayInfo {
   fullDate: string // YYYY-MM-DD
   isToday: boolean
   isCurrentMonth: boolean
+  lunarText: string
   tasks: TaskItem[]
 }
 
@@ -30,9 +32,10 @@ Page({
     
     // 选中的日期
     selectedDate: new Date().toISOString(),
+    selectedDateStr: '',
     
     // 星期标题
-    weekDays: ['日', '一', '二', '三', '四', '五', '六'],
+    weekDays: ['一', '二', '三', '四', '五', '六', '日'],
     
     // 月视图数据
     monthDays: [] as DayInfo[][], // 按周分组
@@ -46,11 +49,13 @@ Page({
     dayTasks: [] as TaskItem[],
     dayAllDayTasks: [] as TaskItem[], // 全天任务（无时间）
     dayTimedTasks: [] as TaskItem[], // 有时间任务
-    timeSlots: [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
+    dayTimedTasksByHour: Array.from({ length: 24 }, () => []) as TaskItem[][],
+    timeSlots: [] as number[],
     
     // 选中日期任务列表（底部显示）
     selectedDateTasks: [] as TaskItem[],
     selectedDateTitle: '', // 例如：今天、明天、2月13日
+    selectedDateLunar: '',
     
     // 加载状态
     isLoading: false,
@@ -60,6 +65,7 @@ Page({
   onLoad() {
     initPageTheme(this)
     this.initializeDate()
+    this.setData({ timeSlots: this.buildTimeSlots() })
     this.loadCalendarData()
   },
 
@@ -73,17 +79,19 @@ Page({
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const todayStr = today.toISOString()
+    const dateStr = this.formatDateStr(today)
     
     this.setData({
       currentDate: todayStr,
-      selectedDate: todayStr
+      selectedDate: todayStr,
+      selectedDateStr: dateStr
     })
   },
 
   // 切换视图模式
   onViewModeChange(e: WechatMiniprogram.CustomEvent) {
     const mode = e.currentTarget.dataset.mode as ViewMode
-    this.setData({ viewMode: mode }, () => {
+    this.setData({ viewMode: mode, currentDate: this.data.selectedDate }, () => {
       this.loadCalendarData()
     })
   },
@@ -119,8 +127,8 @@ Page({
     const lastDay = new Date(year, month + 1, 0)
     const daysInMonth = lastDay.getDate()
     
-    // 获取第一天是星期几（0=周日）
-    const startWeekday = firstDay.getDay()
+    // 获取第一天是星期几（0=周一）
+    const startWeekday = (firstDay.getDay() + 6) % 7
     
     // 生成该月的所有日期（包括前后月填充）
     const weeks: DayInfo[][] = []
@@ -136,6 +144,7 @@ Page({
         fullDate,
         isToday: false,
         isCurrentMonth: false,
+        lunarText: getLunarText(new Date(year, month - 1, date)),
         tasks: []
       })
     }
@@ -153,6 +162,7 @@ Page({
         fullDate,
         isToday: dateObj.getTime() === today.getTime(),
         isCurrentMonth: true,
+        lunarText: getLunarText(dateObj),
         tasks: []
       })
       
@@ -172,6 +182,7 @@ Page({
         fullDate,
         isToday: false,
         isCurrentMonth: false,
+        lunarText: getLunarText(new Date(year, month + 1, nextMonthDay)),
         tasks: []
       })
       nextMonthDay++
@@ -204,6 +215,7 @@ Page({
         fullDate: this.formatDateStr(dateObj),
         isToday: dateObj.getTime() === today.getTime(),
         isCurrentMonth: dateObj.getMonth() === currentDate.getMonth(),
+        lunarText: getLunarText(dateObj),
         tasks: []
       })
     }
@@ -222,11 +234,6 @@ Page({
   // 生成日视图
   generateDayView() {
     const currentDate = new Date(this.data.currentDate)
-    const fullDate = this.formatDateStr(currentDate)
-    
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
     this.setData({
       currentMonthTitle: `${currentDate.getMonth() + 1}月${currentDate.getDate()}日`,
       selectedDate: currentDate.toISOString()
@@ -242,8 +249,10 @@ Page({
     
     if (viewMode === 'month') {
       const date = new Date(currentDate)
-      startDate = new Date(date.getFullYear(), date.getMonth(), 1)
-      endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1)
+      startDate = this.getWeekStart(monthStart)
+      endDate = new Date(startDate)
+      endDate.setDate(startDate.getDate() + 41)
     } else if (viewMode === 'week') {
       const date = new Date(currentDate)
       startDate = this.getWeekStart(date)
@@ -259,13 +268,14 @@ Page({
     const endStr = this.formatDateStr(endDate)
     
     this.setData({ isLoading: true, errorMessage: '' })
+    calendarStore.setState({ loading: true, error: null })
     
     try {
       const tasks = await listTasks({ 
         due_date_from: startStr, 
         due_date_to: endStr 
       }) as TaskItem[]
-      
+
       // 按日期分组任务
       const tasksByDate: Record<string, TaskItem[]> = {}
       tasks.forEach(task => {
@@ -276,6 +286,7 @@ Page({
           tasksByDate[task.due_date].push(task)
         }
       })
+      calendarStore.setState({ tasksByDate, loading: false, error: null })
       
       // 更新日历数据中的任务
       this.updateCalendarWithTasks(tasksByDate)
@@ -286,6 +297,10 @@ Page({
       this.setData({ isLoading: false })
     } catch (error) {
       console.error('Failed to load tasks:', error)
+      calendarStore.setState({
+        loading: false,
+        error: error instanceof Error ? error.message : "加载失败",
+      })
       this.setData({
         isLoading: false,
         errorMessage: error instanceof Error ? error.message : '加载失败'
@@ -339,6 +354,8 @@ Page({
           break
         }
       }
+    } else {
+      tasks = calendarStore.getState().tasksByDate[dateStr] || []
     }
     
     // 设置选中日期标题
@@ -359,7 +376,12 @@ Page({
     this.setData({
       selectedDateTasks: tasks,
       selectedDateTitle: title,
-      dayTasks: tasks
+      selectedDateLunar: getLunarText(selectedDate),
+      selectedDateStr: dateStr,
+      dayTasks: tasks,
+      dayAllDayTasks: tasks.filter((task) => !task.due_time),
+      dayTimedTasks: tasks.filter((task) => task.due_time),
+      dayTimedTasksByHour: this.groupTasksByHour(tasks)
     })
   },
 
@@ -369,7 +391,8 @@ Page({
     const dateObj = new Date(fullDate + 'T00:00:00')
     
     this.setData({
-      selectedDate: dateObj.toISOString()
+      selectedDate: dateObj.toISOString(),
+      selectedDateStr: fullDate
     }, () => {
       this.updateSelectedDateTasks()
     })
@@ -388,7 +411,12 @@ Page({
       date.setDate(date.getDate() - 1)
     }
     
-    this.setData({ currentDate: date.toISOString() }, () => {
+    const dateStr = this.formatDateStr(date)
+    this.setData({ 
+      currentDate: date.toISOString(),
+      selectedDate: date.toISOString(),
+      selectedDateStr: dateStr
+    }, () => {
       this.loadCalendarData()
     })
   },
@@ -406,7 +434,12 @@ Page({
       date.setDate(date.getDate() + 1)
     }
     
-    this.setData({ currentDate: date.toISOString() }, () => {
+    const dateStr = this.formatDateStr(date)
+    this.setData({ 
+      currentDate: date.toISOString(),
+      selectedDate: date.toISOString(),
+      selectedDateStr: dateStr
+    }, () => {
       this.loadCalendarData()
     })
   },
@@ -419,7 +452,8 @@ Page({
     
     this.setData({
       currentDate: todayStr,
-      selectedDate: todayStr
+      selectedDate: todayStr,
+      selectedDateStr: this.formatDateStr(today)
     }, () => {
       this.loadCalendarData()
     })
@@ -441,12 +475,33 @@ Page({
     })
   },
 
-  // 工具函数：获取周开始（周日）
+  // 工具函数：获取周开始（周一）
   getWeekStart(date: Date): Date {
     const d = new Date(date)
     const day = d.getDay()
-    const diff = d.getDate() - day
+    const diff = d.getDate() - ((day + 6) % 7)
     return new Date(d.setDate(diff))
+  },
+
+  buildTimeSlots(): number[] {
+    const slots: number[] = []
+    for (let hour = 0; hour < 24; hour++) {
+      slots.push(hour)
+    }
+    return slots
+  },
+
+  groupTasksByHour(tasks: TaskItem[]): TaskItem[][] {
+    const buckets: TaskItem[][] = Array.from({ length: 24 }, () => [])
+    tasks.forEach((task) => {
+      if (!task.due_time) return
+      const [hourStr] = task.due_time.split(":")
+      const hour = Number(hourStr)
+      if (!Number.isNaN(hour) && hour >= 0 && hour < 24) {
+        buckets[hour].push(task)
+      }
+    })
+    return buckets
   },
 
   // 工具函数：格式化日期为 YYYY-MM-DD
