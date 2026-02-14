@@ -1,0 +1,66 @@
+<view class="page" style="{{themeStyle}}">
+  <view class="header">
+    <view class="title">倒数日</view>
+    <view class="subtitle">把重要的日子放在前面</view>
+  </view>
+
+  <view class="summary-strip">
+    <view class="summary-item">
+      <view class="summary-label">总数</view>
+      <view class="summary-value">{{summary.total}}</view>
+    </view>
+    <view class="summary-divider"></view>
+    <view class="summary-item">
+      <view class="summary-label">进行中</view>
+      <view class="summary-value">{{summary.upcoming}}</view>
+    </view>
+    <view class="summary-divider"></view>
+    <view class="summary-item">
+      <view class="summary-label">已过</view>
+      <view class="summary-value">{{summary.passed}}</view>
+    </view>
+  </view>
+
+  <view class="next-card">
+    <view class="next-label">最近的倒数日</view>
+    <view class="next-main">
+      <view class="next-title">{{summary.nextTitle}}</view>
+      <view class="next-days">{{summary.nextDays}} 天</view>
+    </view>
+  </view>
+
+  <view class="create-card">
+    <view class="create-title">新增倒数日</view>
+    <input class="input" placeholder="例如：毕业 / 旅行" value="{{form.title}}" bindinput="onTitleInput" />
+    <picker mode="date" value="{{form.date}}" bindchange="onDateChange">
+      <view class="date-picker {{form.date ? '' : 'placeholder'}}">
+        {{form.date ? form.date : '选择日期'}}
+      </view>
+    </picker>
+    <view class="create-actions">
+      <button class="btn primary" bindtap="addItem">添加</button>
+    </view>
+  </view>
+
+  <view class="list-section">
+    <view class="section-title">我的倒数日</view>
+    <view class="countdown-list">
+      <view class="countdown-card {{item.toneClass}}" wx:for="{{items}}" wx:key="id">
+        <view class="card-main">
+          <view class="card-title">{{item.title}}</view>
+          <view class="card-date">{{item.displayDate}}</view>
+          <view class="card-badge">{{item.badgeText}}</view>
+        </view>
+        <view class="card-right">
+          <view class="day-number">{{item.dayNumber}}</view>
+          <view class="day-label">天</view>
+          <button size="mini" class="btn mini ghost" data-id="{{item.id}}" bindtap="removeItem">删除</button>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{items.length === 0}}" class="empty-state">
+      <view class="empty-text">暂无倒数日</view>
+      <view class="empty-hint">添加一个重要日期开始吧</view>
+    </view>
+  </view>
+</view>

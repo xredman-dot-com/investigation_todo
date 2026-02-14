@@ -116,6 +116,10 @@ Page({
     }
   },
 
+  onGoHabits() {
+    wx.navigateTo({ url: "/features/habits/pages/index" })
+  },
+
   onBackup() {
     wx.showToast({ title: '备份功能开发中', icon: 'none' })
   },

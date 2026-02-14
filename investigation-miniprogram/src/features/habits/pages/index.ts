@@ -15,8 +15,14 @@ Page({
     habits: [] as HabitItem[],
     logs: [] as HabitLogItem[],
     activeHabitId: "",
+    activeHabitName: "",
     isLoading: false,
     errorMessage: "",
+    summary: {
+      total: 0,
+      totalCompleted: 0,
+      maxStreak: 0
+    },
     form: {
       name: "",
       target_count: ""
@@ -34,14 +40,26 @@ Page({
   async fetchHabits(forceRefresh = false) {
     const cached = habitsStore.getState()
     if (!forceRefresh && cached.habits.length) {
-      this.setData({ habits: cached.habits, logs: cached.logs, activeHabitId: cached.activeHabitId || "" })
+      const normalized = this.normalizeHabits(cached.habits)
+      this.setData({
+        habits: normalized,
+        logs: cached.logs,
+        activeHabitId: cached.activeHabitId || "",
+        summary: this.buildSummary(cached.habits)
+      })
     }
     habitsStore.setState({ loading: true, error: null })
     this.setData({ isLoading: true, errorMessage: "" })
     try {
       const habits = await listHabits()
-      habitsStore.setState({ habits, loading: false, error: null })
-      this.setData({ habits, isLoading: false, errorMessage: "" })
+      const normalized = this.normalizeHabits(habits)
+      habitsStore.setState({ habits: normalized, loading: false, error: null })
+      this.setData({
+        habits: normalized,
+        summary: this.buildSummary(habits),
+        isLoading: false,
+        errorMessage: ""
+      })
     } catch (error) {
       habitsStore.setState({
         loading: false,
@@ -83,7 +101,26 @@ Page({
   async showLogs(event: WechatMiniprogram.TouchEvent) {
     const habitId = event.currentTarget.dataset.id as string
     const logs = await listHabitLogs(habitId)
-    this.setData({ logs, activeHabitId: habitId })
+    const activeHabit = this.data.habits.find((habit) => habit.id === habitId)
+    this.setData({
+      logs,
+      activeHabitId: habitId,
+      activeHabitName: activeHabit ? activeHabit.name : ""
+    })
     habitsStore.setState({ logs, activeHabitId: habitId })
+  },
+  buildSummary(habits: HabitItem[]) {
+    const total = habits.length
+    const totalCompleted = habits.reduce((sum, habit) => sum + (habit.total_completed || 0), 0)
+    const maxStreak = habits.reduce((max, habit) => Math.max(max, habit.longest_streak || 0), 0)
+    return { total, totalCompleted, maxStreak }
+  },
+  normalizeHabits(habits: HabitItem[]) {
+    return habits.map((habit) => ({
+      ...habit,
+      targetText: `目标 ${habit.target_count || 1}/天`,
+      reminderText: habit.reminder_time ? `提醒 ${habit.reminder_time}` : "未设置提醒",
+      toneClass: habit.is_positive ? "positive" : "negative"
+    }))
   }
 })

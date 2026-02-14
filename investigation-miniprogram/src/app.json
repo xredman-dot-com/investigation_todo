@@ -4,6 +4,7 @@
     "features/tasks/pages/detail/detail",
     "features/tasks/pages/create/create",
     "features/calendar/pages/calendar",
+    "features/countdown/pages/index",
     "features/pomodoro/pages/index",
     "features/habits/pages/index",
     "features/habits/pages/detail/detail",
@@ -39,16 +40,16 @@
         "selectedIconPath": "assets/icons/tab-calendar-active.png"
       },
       {
+        "pagePath": "features/countdown/pages/index",
+        "text": "倒数日",
+        "iconPath": "assets/icons/tab-countdown.png",
+        "selectedIconPath": "assets/icons/tab-countdown-active.png"
+      },
+      {
         "pagePath": "features/pomodoro/pages/index",
         "text": "专注",
         "iconPath": "assets/icons/tab-pomodoro.png",
         "selectedIconPath": "assets/icons/tab-pomodoro-active.png"
-      },
-      {
-        "pagePath": "features/habits/pages/index",
-        "text": "习惯",
-        "iconPath": "assets/icons/tab-habit.png",
-        "selectedIconPath": "assets/icons/tab-habit-active.png"
       },
       {
         "pagePath": "features/settings/pages/settings",

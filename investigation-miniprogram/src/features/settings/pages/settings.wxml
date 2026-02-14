@@ -60,6 +60,13 @@
       </view>
       <text class="setting-arrow">›</text>
     </view>
+    <view class="setting-item" bindtap="onGoHabits">
+      <view class="setting-left">
+        <text class="setting-icon">✅</text>
+        <text class="setting-label">习惯打卡</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
   </view>
 
   <!-- 数据管理 -->
