@@ -32,7 +32,7 @@ page {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-strong));
-  color: #101010;
+  color: var(--color-on-accent);
   border-radius: 18rpx;
   padding: 16rpx 28rpx;
   font-size: 26rpx;

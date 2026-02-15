@@ -12,6 +12,7 @@ export interface ThemeColors {
   // 功能色
   accent: string       // 强调色（主按钮等）
   accentStrong: string // 强调色加强
+  accentText: string   // 强调色上的文字
   success: string      // 成功色
   warning: string      // 警告色
   danger: string       // 危险色
@@ -45,6 +46,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       border: '#E5E7EB',
       accent: '#3B82F6',
       accentStrong: '#2563EB',
+      accentText: '#ffffff',
       success: '#10B981',
       warning: '#F59E0B',
       danger: '#EF4444',
@@ -68,6 +70,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       border: '#E7E5E4',
       accent: '#D97706',
       accentStrong: '#B45309',
+      accentText: '#1f1405',
       success: '#16A34A',
       warning: '#EA580C',
       danger: '#DC2626',
@@ -91,6 +94,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       border: 'rgba(255, 255, 255, 0.08)',
       accent: '#ff9d2b',
       accentStrong: '#ff7a18',
+      accentText: '#1a1205',
       success: '#2cb67d',
       warning: '#f4b350',
       danger: '#ff5c5c',
@@ -114,6 +118,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       border: '#E5E7EB',
       accent: '#10B981',
       accentStrong: '#059669',
+      accentText: '#05281a',
       success: '#10B981',
       warning: '#F59E0B',
       danger: '#EF4444',
@@ -137,6 +142,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       border: '#E5E7EB',
       accent: '#8B5CF6',
       accentStrong: '#7C3AED',
+      accentText: '#fdfbff',
       success: '#10B981',
       warning: '#F59E0B',
       danger: '#EF4444',
@@ -161,6 +167,7 @@ export function initTheme(): Theme {
   const themeName = (wx.getStorageSync(THEME_STORAGE_KEY) as ThemeName) || 'default'
   currentTheme = THEMES[themeName] || THEMES.default
   applyThemeToCSS(currentTheme)
+  applyTabBarTheme(currentTheme)
   return currentTheme
 }
 
@@ -190,6 +197,7 @@ export function setTheme(name: ThemeName): void {
   currentTheme = THEMES[name]
   wx.setStorageSync(THEME_STORAGE_KEY, name)
   applyThemeToCSS(currentTheme)
+  applyTabBarTheme(currentTheme)
   
   // 更新全局数据
   const app = getApp<IAppOption>()
@@ -217,6 +225,7 @@ function applyThemeToCSS(theme: Theme): void {
     `--color-border: ${colors.border}`,
     `--color-accent: ${colors.accent}`,
     `--color-accent-strong: ${colors.accentStrong}`,
+    `--color-on-accent: ${colors.accentText}`,
     `--color-success: ${colors.success}`,
     `--color-warning: ${colors.warning}`,
     `--color-danger: ${colors.danger}`,
@@ -258,6 +267,19 @@ function applyThemeToCSS(theme: Theme): void {
   })
   
   console.log(`[Theme] Applied theme: ${theme.label}`)
+}
+
+function applyTabBarTheme(theme: Theme): void {
+  try {
+    wx.setTabBarStyle({
+      backgroundColor: theme.colors.surface,
+      color: theme.colors.textSecondary,
+      selectedColor: theme.colors.accent,
+      borderStyle: theme.isDark ? "black" : "white"
+    })
+  } catch (error) {
+    console.warn("[Theme] Failed to apply tab bar theme", error)
+  }
 }
 
 /**

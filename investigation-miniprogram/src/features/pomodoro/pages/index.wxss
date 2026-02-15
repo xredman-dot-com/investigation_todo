@@ -207,7 +207,7 @@
 
 .btn.primary {
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-strong));
-  color: #101010;
+  color: var(--color-on-accent);
   font-weight: 600;
 }
 

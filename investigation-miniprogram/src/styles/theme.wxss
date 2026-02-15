@@ -15,6 +15,7 @@
  * --color-border: 边框颜色
  * --color-accent: 强调色（主按钮）
  * --color-accent-strong: 强调色加强
+ * --color-on-accent: 强调色上的文字
  * --color-success: 成功色
  * --color-warning: 警告色
  * --color-danger: 危险色
@@ -35,6 +36,7 @@ page {
   --color-border: rgba(255, 255, 255, 0.08);
   --color-accent: #ff9d2b;
   --color-accent-strong: #ff7a18;
+  --color-on-accent: #1a1205;
   --color-success: #2cb67d;
   --color-warning: #f4b350;
   --color-danger: #ff5c5c;
