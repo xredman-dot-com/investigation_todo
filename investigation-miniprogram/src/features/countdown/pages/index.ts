@@ -12,6 +12,7 @@ type CountdownDisplayItem = CountdownItem & {
   toneClass: string
   typeLabel: string
   typeClass: string
+  sortDate: string
 }
 
 type Summary = {
@@ -193,10 +194,11 @@ Page({
         badgeText: daysLeft >= 0 ? `还有 ${dayNumber} 天` : `已过 ${dayNumber} 天`,
         toneClass: daysLeft >= 0 ? "upcoming" : "passed",
         typeLabel,
-        typeClass: `type-${typeValue}`
+        typeClass: `type-${typeValue}`,
+        sortDate: effectiveTargetDate
       }
     })
-    return normalized.sort((a, b) => a.targetDate.localeCompare(b.targetDate))
+    return normalized.sort((a, b) => a.sortDate.localeCompare(b.sortDate))
   },
 
   buildSummary(items: CountdownDisplayItem[]): Summary {
