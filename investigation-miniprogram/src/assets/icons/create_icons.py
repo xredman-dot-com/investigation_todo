@@ -47,22 +47,17 @@ def create_calendar_icon(output_path, is_active=False):
     color = BLUE if is_active else GRAY
 
     # Draw calendar outline
-    x1, y1 = 6, 6
-    x2, y2 = 34, 34
-    draw.rectangle([x1, y1, x2, y2], outline=color, width=2)
+    draw.rectangle([6, 7, 34, 34], outline=color, width=2)
 
     # Draw header line
     draw.line([6, 14, 34, 14], fill=color, width=2)
 
-    # Draw top rings
-    draw.ellipse([10, 8, 12, 10], outline=color, width=1)
-    draw.ellipse([17, 8, 19, 10], outline=color, width=1)
-    draw.ellipse([24, 8, 26, 10], outline=color, width=1)
-    draw.ellipse([31, 8, 33, 10], outline=color, width=1)
+    # Draw top bindings
+    draw.line([12, 5, 12, 11], fill=color, width=2)
+    draw.line([28, 5, 28, 11], fill=color, width=2)
 
-    # Draw days grid
-    for x in range(11, 34, 6):
-        draw.line([x, 18, x, 32], fill=color, width=1)
+    # Draw date block
+    draw.rectangle([14, 20, 26, 32], outline=color, width=2)
 
     img.save(output_path)
     print(f"Created: {output_path}")
@@ -91,6 +86,28 @@ def create_pomodoro_icon(output_path, is_active=False):
     img.save(output_path)
     print(f"Created: {output_path}")
 
+def create_countdown_icon(output_path, is_active=False):
+    """Create a countdown/hourglass icon"""
+    img = Image.new('RGBA', (SIZE, SIZE), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    color = BLUE if is_active else GRAY
+
+    # Draw top and bottom bars
+    draw.line([10, 8, 30, 8], fill=color, width=2)
+    draw.line([10, 32, 30, 32], fill=color, width=2)
+
+    # Draw hourglass diagonals
+    draw.line([10, 8, 20, 20], fill=color, width=2)
+    draw.line([30, 8, 20, 20], fill=color, width=2)
+    draw.line([10, 32, 20, 20], fill=color, width=2)
+    draw.line([30, 32, 20, 20], fill=color, width=2)
+
+    # Draw sand dot
+    draw.ellipse([18, 22, 22, 26], outline=color, width=2)
+
+    img.save(output_path)
+    print(f"Created: {output_path}")
 def create_habit_icon(output_path, is_active=False):
     """Create a habit/tracking icon (star)"""
     img = Image.new('RGBA', (SIZE, SIZE), (0, 0, 0, 0))
@@ -151,6 +168,10 @@ create_calendar_icon(os.path.join(icons_dir, 'tab-calendar-active.png'), is_acti
 # Pomodoro icons
 create_pomodoro_icon(os.path.join(icons_dir, 'tab-pomodoro.png'), is_active=False)
 create_pomodoro_icon(os.path.join(icons_dir, 'tab-pomodoro-active.png'), is_active=True)
+
+# Countdown icons
+create_countdown_icon(os.path.join(icons_dir, 'tab-countdown.png'), is_active=False)
+create_countdown_icon(os.path.join(icons_dir, 'tab-countdown-active.png'), is_active=True)
 
 # Habit icons
 create_habit_icon(os.path.join(icons_dir, 'tab-habit.png'), is_active=False)
