@@ -2,10 +2,10 @@
 <view class="page fade-in" style="{{themeStyle}}">
   <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="onRetryLoad" />
   <status-banner message="正在加载任务..." wx:if="{{isLoading}}" />
-  <!-- 顶部快速添加 -->
+  <!-- 顶部导航 -->
   <view class="header">
     <global-menu inline="{{true}}" />
-    <quick-add placeholder="添加任务至 {{currentList.name}}" bind:add="onQuickAdd" />
+    <view class="header-title">{{currentList.name}}</view>
     <view class="search-btn" bindtap="onSearch">
       <text class="search-icon">🔍</text>
     </view>
@@ -67,7 +67,7 @@
         <view wx:if="{{item.tasks.todo.length === 0 && item.tasks.done.length === 0}}" class="empty">
           <text class="empty-icon">📝</text>
           <text class="empty-text">暂无任务</text>
-          <text class="empty-hint">点击上方输入框添加任务</text>
+          <text class="empty-hint">点击右下角按钮添加任务</text>
         </view>
       </scroll-view>
     </swiper-item>
