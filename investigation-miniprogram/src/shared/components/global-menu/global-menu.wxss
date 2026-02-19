@@ -123,8 +123,8 @@
 }
 
 .item-icon {
-  width: 34rpx;
-  height: 34rpx;
+  width: 44rpx;
+  height: 44rpx;
 }
 
 .item-label {
