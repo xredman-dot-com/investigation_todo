@@ -16,6 +16,7 @@ from src.models.user import User
 
 __all__ = [
     "Attachment",
+    "AuditLog",
     "Countdown",
     "Filter",
     "Habit",
@@ -31,3 +32,4 @@ __all__ = [
     "Task",
     "User",
 ]
+from src.models.audit_log import AuditLog

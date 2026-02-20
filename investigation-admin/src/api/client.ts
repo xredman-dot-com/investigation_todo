@@ -1,41 +1,73 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/v1"
+export const API_BASE = import.meta.env.VITE_API_BASE || "/api/v1"
 
-const TOKEN_KEY = "admin_token"
+export class ApiError extends Error {
+  status: number
+  info: unknown
 
-export async function apiRequest<T>(
+  constructor(message: string, status: number, info?: unknown) {
+    super(message)
+    this.status = status
+    this.info = info
+  }
+}
+
+export const getAuthToken = () => localStorage.getItem("admin_token")
+
+export const setAuthToken = (token: string) => {
+  localStorage.setItem("admin_token", token)
+}
+
+export const clearAuthToken = () => {
+  localStorage.removeItem("admin_token")
+}
+
+const buildQuery = (params: Record<string, string | number | undefined>) => {
+  const search = new URLSearchParams()
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== "") {
+      search.set(key, String(value))
+    }
+  })
+  const query = search.toString()
+  return query ? `?${query}` : ""
+}
+
+export const apiFetch = async <T>(
   path: string,
-  options: RequestInit & { params?: Record<string, any> } = {}
-): Promise<T> {
-  const url = new URL(`${API_BASE_URL}${path}`)
-  if (options.params) {
-    Object.entries(options.params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        url.searchParams.set(key, String(value))
-      }
-    })
+  options: RequestInit = {},
+  params?: Record<string, string | number | undefined>
+): Promise<T> => {
+  const token = getAuthToken()
+  const headers = new Headers(options.headers)
+  headers.set("Content-Type", "application/json")
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`)
   }
 
-  const token = localStorage.getItem(TOKEN_KEY)
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...(options.headers || {})
-  }
-
-  const response = await fetch(url.toString(), {
+  const response = await fetch(`${API_BASE}${path}${params ? buildQuery(params) : ""}`, {
     ...options,
     headers
   })
 
   if (!response.ok) {
-    const payload = await response.json().catch(() => ({}))
-    const message = payload?.detail || `Request failed (${response.status})`
-    throw new Error(message)
+    let info: unknown = null
+    try {
+      info = await response.json()
+    } catch {
+      info = await response.text()
+    }
+    if (response.status === 401) {
+      clearAuthToken()
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login"
+      }
+    }
+    throw new ApiError(response.statusText, response.status, info)
   }
 
   if (response.status === 204) {
-    return null as T
+    return undefined as T
   }
 
-  return response.json() as Promise<T>
+  return (await response.json()) as T
 }

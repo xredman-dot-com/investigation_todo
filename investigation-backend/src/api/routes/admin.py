@@ -2,15 +2,19 @@ from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status as http_status
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_admin
 from src.core.database import get_db
+from src.models.audit_log import AuditLog
 from src.models.moderation import ModerationItem
 from src.models.system_setting import SystemSetting
+from src.models.task import Task
 from src.models.user import User
 from src.schemas.admin import (
+    AdminSummary,
+    AuditLogOut,
     ModerationItemCreate,
     ModerationItemOut,
     ModerationItemUpdate,
@@ -21,6 +25,57 @@ from src.schemas.admin import (
 )
 
 router = APIRouter()
+
+
+def _add_audit_log(
+    db: AsyncSession,
+    actor_id: UUID | None,
+    action: str,
+    resource_type: str,
+    resource_id: str | None = None,
+    detail: dict | None = None,
+) -> None:
+    db.add(
+        AuditLog(
+            actor_id=actor_id,
+            action=action,
+            resource_type=resource_type,
+            resource_id=resource_id,
+            detail=detail,
+        )
+    )
+
+
+@router.get("/summary", response_model=AdminSummary)
+async def admin_summary(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> AdminSummary:
+    users_total = (await db.execute(select(func.count(User.id)))).scalar_one()
+    users_active = (
+        await db.execute(select(func.count(User.id)).where(User.status == "active"))
+    ).scalar_one()
+    users_banned = (
+        await db.execute(select(func.count(User.id)).where(User.status == "banned"))
+    ).scalar_one()
+    tasks_total = (await db.execute(select(func.count(Task.id)))).scalar_one()
+    tasks_completed = (
+        await db.execute(select(func.count(Task.id)).where(Task.completed_at.is_not(None)))
+    ).scalar_one()
+    moderation_pending = (
+        await db.execute(select(func.count(ModerationItem.id)).where(ModerationItem.status == "pending"))
+    ).scalar_one()
+    settings_count = (await db.execute(select(func.count(SystemSetting.id)))).scalar_one()
+
+    return AdminSummary(
+        users_total=users_total,
+        users_active=users_active,
+        users_banned=users_banned,
+        tasks_total=tasks_total,
+        tasks_completed=tasks_completed,
+        moderation_pending=moderation_pending,
+        settings_count=settings_count,
+    )
 
 
 @router.get("/users", response_model=list[UserAdminOut])
@@ -45,6 +100,7 @@ async def list_users(
                 User.openid.ilike(like_query),
                 User.nickname.ilike(like_query),
                 User.unionid.ilike(like_query),
+                User.username.ilike(like_query),
             )
         )
     stmt = stmt.order_by(User.created_at.desc()).limit(limit).offset(offset)
@@ -81,6 +137,14 @@ async def update_user(
     for key, value in update_data.items():
         setattr(user, key, value)
 
+    _add_audit_log(
+        db,
+        current_user.id,
+        action="user.update",
+        resource_type="user",
+        resource_id=str(user.id),
+        detail=update_data,
+    )
     await db.commit()
     await db.refresh(user)
     return user
@@ -130,6 +194,14 @@ async def create_moderation_item(
         created_by=current_user.id,
     )
     db.add(new_item)
+    _add_audit_log(
+        db,
+        current_user.id,
+        action="moderation.create",
+        resource_type="moderation_item",
+        resource_id=str(new_item.id),
+        detail={"content_type": payload.content_type, "content_id": payload.content_id},
+    )
     await db.commit()
     await db.refresh(new_item)
     return new_item
@@ -161,6 +233,14 @@ async def update_moderation_item(
             item.reviewed_by = None
             item.reviewed_at = None
 
+    _add_audit_log(
+        db,
+        current_user.id,
+        action="moderation.update",
+        resource_type="moderation_item",
+        resource_id=str(item.id),
+        detail=update_data,
+    )
     await db.commit()
     await db.refresh(item)
     return item
@@ -212,6 +292,40 @@ async def upsert_setting(
         setting.description = payload.description
         setting.updated_by = current_user.id
 
+    _add_audit_log(
+        db,
+        current_user.id,
+        action="settings.upsert",
+        resource_type="system_setting",
+        resource_id=key,
+        detail={"value": payload.value, "description": payload.description},
+    )
     await db.commit()
     await db.refresh(setting)
     return setting
+
+
+@router.get("/logs", response_model=list[AuditLogOut])
+async def list_audit_logs(
+    action: str | None = None,
+    resource_type: str | None = None,
+    actor_id: UUID | None = None,
+    q: str | None = None,
+    limit: int = 100,
+    offset: int = 0,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> list[AuditLog]:
+    stmt = select(AuditLog)
+    if action:
+        stmt = stmt.where(AuditLog.action == action)
+    if resource_type:
+        stmt = stmt.where(AuditLog.resource_type == resource_type)
+    if actor_id:
+        stmt = stmt.where(AuditLog.actor_id == actor_id)
+    if q:
+        like_query = f"%{q}%"
+        stmt = stmt.where(AuditLog.resource_id.ilike(like_query))
+    stmt = stmt.order_by(AuditLog.created_at.desc()).limit(limit).offset(offset)
+    result = await db.execute(stmt)
+    return result.scalars().all()

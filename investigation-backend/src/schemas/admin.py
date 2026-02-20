@@ -5,11 +5,22 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 
+class AdminSummary(BaseModel):
+    users_total: int
+    users_active: int
+    users_banned: int
+    tasks_total: int
+    tasks_completed: int
+    moderation_pending: int
+    settings_count: int
+
+
 class UserAdminOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    openid: str
+    openid: str | None = None
+    username: str | None = None
     unionid: str | None = None
     nickname: str | None = None
     avatar_url: str | None = None
@@ -73,3 +84,15 @@ class SystemSettingOut(BaseModel):
     updated_by: UUID | None = None
     created_at: datetime
     updated_at: datetime
+
+
+class AuditLogOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    actor_id: UUID | None = None
+    action: str
+    resource_type: str
+    resource_id: str | None = None
+    detail: dict[str, Any] | list[Any] | None = None
+    created_at: datetime

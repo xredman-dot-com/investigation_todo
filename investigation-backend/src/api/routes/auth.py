@@ -5,10 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database import get_db
-from src.core.security import create_access_token
+from src.core.security import create_access_token, verify_password
 from src.models.list import List
 from src.models.user import User
-from src.schemas.auth import TokenResponse, WeChatLoginRequest
+from src.schemas.auth import AdminLoginRequest, TokenResponse, WeChatLoginRequest
 from src.services.wechat import WeChatAPIError, exchange_code_for_session
 
 router = APIRouter()
@@ -50,5 +50,25 @@ async def login_wechat(payload: WeChatLoginRequest, db: AsyncSession = Depends(g
     await db.commit()
     await db.refresh(user)
 
+    token = create_access_token(str(user.id))
+    return TokenResponse(access_token=token)
+
+
+@router.post("/admin", response_model=TokenResponse)
+async def login_admin(payload: AdminLoginRequest, db: AsyncSession = Depends(get_db)) -> TokenResponse:
+    result = await db.execute(select(User).where(User.username == payload.username))
+    user = result.scalar_one_or_none()
+    if not user or not user.password_hash:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    if not verify_password(payload.password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    if user.status != "active":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not active")
+    if user.role not in {"admin", "owner"}:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
+
+    user.last_login_at = datetime.utcnow()
+    await db.commit()
+    await db.refresh(user)
     token = create_access_token(str(user.id))
     return TokenResponse(access_token=token)

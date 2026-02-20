@@ -1,14 +1,12 @@
-import { apiRequest } from "./client"
+import { apiFetch } from "./client"
 
-export type TokenResponse = { access_token: string; token_type: string }
+export type TokenResponse = {
+  access_token: string
+  token_type: string
+}
 
-export function loginWithCode(code: string): Promise<TokenResponse> {
-  return apiRequest<TokenResponse>("/auth/wechat", {
+export const adminLogin = (payload: { username: string; password: string }) =>
+  apiFetch<TokenResponse>("/auth/admin", {
     method: "POST",
-    body: JSON.stringify({ code })
+    body: JSON.stringify(payload)
   })
-}
-
-export function getMe(): Promise<any> {
-  return apiRequest<any>("/users/me")
-}

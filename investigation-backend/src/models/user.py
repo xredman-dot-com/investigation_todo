@@ -13,7 +13,11 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    openid: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
+    openid: Mapped[Optional[str]] = mapped_column(
+        String(100), unique=True, index=True, nullable=True
+    )
+    username: Mapped[Optional[str]] = mapped_column(String(100), unique=True, nullable=True)
+    password_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     unionid: Mapped[Optional[str]] = mapped_column(String(100), unique=True, index=True, nullable=True)
     nickname: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     avatar_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
