@@ -1,3 +1,5 @@
+import { settingsStore } from "../../../stores/settings"
+
 type MenuItem = {
   label: string
   icon: string
@@ -26,10 +28,8 @@ Component({
 
   lifetimes: {
     attached() {
-      const userInfo = wx.getStorageSync("userInfo") || {}
-      const name = userInfo.name || userInfo.nickname || "未登录"
+      this.refreshUser()
       this.setData({
-        userName: name,
         sections: [
           {
             title: "我的",
@@ -58,7 +58,28 @@ Component({
   },
 
   methods: {
+    refreshUser() {
+      const storeUser = settingsStore.getState().user
+      const app = getApp<{ globalData: { user: { nickname?: string; avatar_url?: string; openid?: string } | null } }>()
+      const globalUser = app.globalData?.user || null
+      const userInfo = wx.getStorageSync("userInfo") || {}
+      const nickname =
+        storeUser?.nickname ||
+        globalUser?.nickname ||
+        userInfo.nickname ||
+        userInfo.name ||
+        (globalUser?.openid ? `用户-${globalUser.openid.slice(-4)}` : "")
+      const avatar = storeUser?.avatar_url || globalUser?.avatar_url || userInfo.avatar_url
+      console.log("[Menu] refreshUser", { storeUser, globalUser, userInfo })
+      this.setData({
+        userName: nickname || "未登录",
+        menuAvatar: avatar || "/assets/icons/menu-user.png"
+      })
+    },
     toggleMenu() {
+      if (!this.data.open) {
+        this.refreshUser()
+      }
       this.setData({ open: !this.data.open })
     },
     closeMenu() {
