@@ -1,5 +1,6 @@
 // pages/tasks/list/list.ts
 import { listTasks, updateTask, deleteTask, createTask, listLists } from '../../services'
+import { filterTasks } from "../../../../services/filters"
 import type { TaskItem, ListItem } from '../../model'
 import { tasksStore } from "../../../../stores/tasks"
 import { initPageTheme } from '../../../../core/themeMixin'
@@ -13,17 +14,26 @@ interface ListWithTasks extends ListItem {
   tasks: TaskGroup
 }
 
+type TaskViewMode = "lists" | "smart" | "filter"
+type SmartViewKey = "today" | "tomorrow" | "next7" | "inbox" | "all"
+
 Page({
   data: {
     lists: [] as ListWithTasks[],
     currentListIndex: 0,
     currentList: {} as ListItem,
+    headerTitle: "任务",
     hasPrevList: false,
     hasNextList: false,
     showSwipePanel: false,
     selectedTaskId: '',
     isLoading: false,
-    errorMessage: ''
+    errorMessage: '',
+    viewMode: "lists" as TaskViewMode,
+    smartTitle: "",
+    smartTasks: { todo: [], done: [] } as TaskGroup,
+    filterId: "",
+    smartViewKey: "" as SmartViewKey | ""
   },
 
   async onLoad() {
@@ -35,6 +45,7 @@ Page({
   onShow() {
     // 页面显示时刷新主题
     initPageTheme(this)
+    this.applyMenuSelection()
   },
 
   applyStoreState(lists: ListItem[], tasksByListId: Record<string, TaskItem[]>, activeListId: string | null) {
@@ -50,8 +61,10 @@ Page({
       lists: listsWithTasks,
       currentListIndex: resolvedIndex,
       currentList,
+      headerTitle: currentList.name || "任务",
       hasPrevList: resolvedIndex > 0,
-      hasNextList: resolvedIndex < listsWithTasks.length - 1
+      hasNextList: resolvedIndex < listsWithTasks.length - 1,
+      viewMode: "lists"
     })
   },
 
@@ -102,6 +115,102 @@ Page({
     }
   },
 
+  applyMenuSelection() {
+    const selection = wx.getStorageSync("menu:taskView")
+    if (!selection) return
+    wx.removeStorageSync("menu:taskView")
+    const view = selection.view as string
+    if (view === "list" && selection.listId) {
+      tasksStore.setState({ activeListId: selection.listId })
+      this.loadLists(true)
+      return
+    }
+    if (view === "filter" && selection.filterId) {
+      this.loadFilteredTasks(selection.filterId, selection.filterName)
+      return
+    }
+    if (["today", "tomorrow", "next7", "inbox", "all"].includes(view)) {
+      this.loadSmartTasks(view as SmartViewKey)
+    }
+  },
+
+  async loadFilteredTasks(filterId: string, filterName?: string) {
+    this.setData({ isLoading: true, errorMessage: "", viewMode: "filter", filterId })
+    wx.showLoading({ title: "加载中..." })
+    try {
+      const tasks = await filterTasks(filterId)
+      const grouped = this.groupTasks(tasks)
+      this.setData({
+        smartTitle: filterName || "过滤器",
+        smartTasks: grouped,
+        headerTitle: filterName || "过滤器",
+        isLoading: false
+      })
+    } catch (error) {
+      this.setData({
+        isLoading: false,
+        errorMessage: error instanceof Error ? error.message : "加载失败"
+      })
+    } finally {
+      wx.hideLoading()
+    }
+  },
+
+  async loadSmartTasks(view: SmartViewKey) {
+    this.setData({ isLoading: true, errorMessage: "", viewMode: "smart" })
+    wx.showLoading({ title: "加载中..." })
+    try {
+      let tasks: TaskItem[] = []
+      let title = ""
+      if (view === "today" || view === "tomorrow" || view === "next7") {
+        const range = this.buildDateRange(view)
+        tasks = await listTasks(range)
+        title = view === "today" ? "今天" : view === "tomorrow" ? "明天" : "最近七天"
+      } else if (view === "all") {
+        tasks = await listTasks()
+        title = "全部任务"
+      } else if (view === "inbox") {
+        const lists = await listLists()
+        const inbox = lists.find((list) => list.name === "Inbox" || list.name === "收件箱")
+        if (inbox) {
+          tasks = await listTasks({ list_id: inbox.id })
+        }
+        title = "收集箱"
+      }
+      this.setData({
+        smartTitle: title,
+        smartViewKey: view,
+        smartTasks: this.groupTasks(tasks),
+        headerTitle: title,
+        isLoading: false
+      })
+    } catch (error) {
+      this.setData({
+        isLoading: false,
+        errorMessage: error instanceof Error ? error.message : "加载失败"
+      })
+    } finally {
+      wx.hideLoading()
+    }
+  },
+
+  buildDateRange(view: "today" | "tomorrow" | "next7") {
+    const today = new Date()
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const end = new Date(start)
+    if (view === "tomorrow") {
+      start.setDate(start.getDate() + 1)
+      end.setDate(start.getDate())
+    } else if (view === "next7") {
+      end.setDate(start.getDate() + 6)
+    }
+    const toStr = (value: Date) => value.toISOString().slice(0, 10)
+    return {
+      due_date_from: toStr(start),
+      due_date_to: toStr(end)
+    }
+  },
+
   groupTasks(tasks: TaskItem[]): TaskGroup {
     return {
       todo: tasks.filter(t => t.status === 'todo'),
@@ -136,7 +245,7 @@ Page({
   },
 
   onCreateTask() {
-    const listId = this.data.currentList.id
+    const listId = this.data.viewMode === "lists" ? this.data.currentList.id : ""
     const query = listId ? `?listId=${listId}` : ''
     wx.navigateTo({
       url: `/features/tasks/pages/create/create${query}`
@@ -185,14 +294,14 @@ Page({
             success: (res) => {
               if (res.confirm) {
                 updateTask(taskId, { status: 'todo' }).then(() => {
-                  this.loadLists(true)
+                  this.reloadCurrentView()
                 })
               }
             }
           })
         }, 5000)
       }
-      await this.loadLists(true)
+      await this.reloadCurrentView()
     } catch (error) {
       console.error('Failed to toggle task:', error)
       wx.showToast({ title: '操作失败', icon: 'none' })
@@ -233,7 +342,7 @@ Page({
         try {
           await deleteTask(this.data.selectedTaskId)
           wx.showToast({ title: '已删除', icon: 'success' })
-          await this.loadLists(true)
+          await this.reloadCurrentView()
         } catch (error) {
           console.error('Failed to delete task:', error)
           wx.showToast({ title: '删除失败', icon: 'none' })
@@ -247,10 +356,27 @@ Page({
   },
 
   findTask(taskId: string): TaskItem | undefined {
+    if (this.data.viewMode !== "lists") {
+      return [...this.data.smartTasks.todo, ...this.data.smartTasks.done].find((task) => task.id === taskId)
+    }
     for (const list of this.data.lists) {
       const task = [...list.tasks.todo, ...list.tasks.done].find(t => t.id === taskId)
       if (task) return task
     }
     return undefined
+  },
+
+  async reloadCurrentView() {
+    if (this.data.viewMode === "lists") {
+      await this.loadLists(true)
+      return
+    }
+    if (this.data.viewMode === "filter") {
+      await this.loadFilteredTasks(this.data.filterId, this.data.smartTitle)
+      return
+    }
+    if (this.data.smartViewKey) {
+      await this.loadSmartTasks(this.data.smartViewKey)
+    }
   }
 })

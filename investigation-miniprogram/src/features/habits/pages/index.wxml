@@ -4,7 +4,7 @@
 
   <view class="habit-header">
     <view class="habit-top">
-      <global-menu inline="{{true}}" />
+      <global-menu inline="{{true}}" context="habits" />
       <view class="habit-title">习惯</view>
     </view>
     <view class="habit-subtitle">让每日打卡更有仪式感</view>

@@ -31,6 +31,8 @@ function formatDisplayDate(value: string): string {
 Page({
   data: {
     items: [] as CountdownDisplayItem[],
+    filteredItems: [] as CountdownDisplayItem[],
+    filterType: "all",
     summary: {
       total: 0,
       upcoming: 0,
@@ -51,6 +53,7 @@ Page({
 
   onShow() {
     initPageTheme(this)
+    this.applyMenuSelection()
     this.fetchItems()
   },
 
@@ -65,9 +68,11 @@ Page({
     try {
       const items = await listCountdowns()
       const normalized = this.normalizeItems(items)
+      const filtered = this.applyTypeFilter(normalized, this.data.filterType)
       this.setData({
         items: normalized,
-        summary: this.buildSummary(normalized),
+        filteredItems: filtered,
+        summary: this.buildSummary(filtered),
         isLoading: false
       })
     } catch (error) {
@@ -76,6 +81,21 @@ Page({
         errorMessage: error instanceof Error ? error.message : "加载失败"
       })
     }
+  },
+  applyMenuSelection() {
+    const selection = wx.getStorageSync("menu:countdownType")
+    if (!selection) return
+    wx.removeStorageSync("menu:countdownType")
+    const type = selection.type || "all"
+    this.setData({ filterType: type })
+    if (this.data.items.length) {
+      const filtered = this.applyTypeFilter(this.data.items, type)
+      this.setData({ filteredItems: filtered, summary: this.buildSummary(filtered) })
+    }
+  },
+  applyTypeFilter(items: CountdownDisplayItem[], type: string) {
+    if (type === "all") return items
+    return items.filter((item) => item.type === type)
   },
 
   onTitleInput(e: WechatMiniprogram.Input) {

@@ -7,7 +7,7 @@
   <!-- 顶部导航栏 -->
   <view class="calendar-header">
     <view class="calendar-top">
-      <global-menu inline="{{true}}" />
+      <global-menu inline="{{true}}" context="calendar" />
       <view class="calendar-title">日历</view>
     </view>
     <!-- 视图切换 Tab -->

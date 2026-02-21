@@ -36,6 +36,7 @@ Page({
   timerInterval: null as number | null,
   onShow() {
     initPageTheme(this)
+    this.applyMenuSelection()
     this.loadSettings()
     this.fetchSessions()
     this.syncTimerDisplay()
@@ -50,6 +51,19 @@ Page({
   },
   onUnload() {
     this.stopInterval()
+  },
+  applyMenuSelection() {
+    const selection = wx.getStorageSync("menu:pomodoroMode")
+    if (!selection) return
+    wx.removeStorageSync("menu:pomodoroMode")
+    const mode = selection.mode as FocusMode
+    if (mode && mode !== this.data.viewMode) {
+      this.resetTimer(true)
+      this.setData({ viewMode: mode, timerPhase: "focus" }, () => {
+        this.syncTimerDisplay()
+        this.updateActionLabels()
+      })
+    }
   },
   async fetchSessions(forceRefresh = false) {
     const cached = pomodoroStore.getState()

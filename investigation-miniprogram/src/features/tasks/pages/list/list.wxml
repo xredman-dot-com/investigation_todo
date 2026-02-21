@@ -4,15 +4,15 @@
   <status-banner message="正在加载任务..." wx:if="{{isLoading}}" />
   <!-- 顶部导航 -->
   <view class="header">
-    <global-menu inline="{{true}}" />
-    <view class="header-title">{{currentList.name}}</view>
+    <global-menu inline="{{true}}" context="tasks" />
+    <view class="header-title">{{headerTitle}}</view>
     <view class="search-btn" bindtap="onSearch">
       <text class="search-icon">🔍</text>
     </view>
   </view>
 
   <!-- 清单切换指示器 -->
-  <view class="list-indicator">
+  <view class="list-indicator" wx:if="{{viewMode === 'lists'}}">
     <view class="list-name">{{currentList.name}}</view>
     <view class="list-arrows">
       <text class="arrow" wx:if="{{hasPrevList}}">‹</text>
@@ -22,6 +22,7 @@
 
   <!-- 任务列表容器（支持滑动切换） -->
   <swiper
+    wx:if="{{viewMode === 'lists'}}"
     class="tasks-swiper"
     current="{{currentListIndex}}"
     bindchange="onListChange"
@@ -72,6 +73,40 @@
       </scroll-view>
     </swiper-item>
   </swiper>
+
+  <scroll-view wx:if="{{viewMode !== 'lists'}}" class="tasks-scroll" scroll-y enable-back-to-top>
+    <view wx:if="{{smartTasks.todo.length > 0}}" class="section">
+      <view class="section-title">待办 ({{smartTasks.todo.length}})</view>
+      <task-card
+        wx:for="{{smartTasks.todo}}"
+        wx:for-item="task"
+        wx:key="id"
+        task="{{task}}"
+        bind:toggle="onTaskToggle"
+        bind:detail="onTaskDetail"
+        bind:more="onTaskMore"
+      />
+    </view>
+
+    <view wx:if="{{smartTasks.done.length > 0}}" class="section">
+      <view class="section-title">已完成</view>
+      <task-card
+        wx:for="{{smartTasks.done}}"
+        wx:for-item="task"
+        wx:key="id"
+        task="{{task}}"
+        bind:toggle="onTaskToggle"
+        bind:detail="onTaskDetail"
+        bind:more="onTaskMore"
+      />
+    </view>
+
+    <view wx:if="{{smartTasks.todo.length === 0 && smartTasks.done.length === 0}}" class="empty">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无任务</text>
+      <text class="empty-hint">点击右下角按钮添加任务</text>
+    </view>
+  </scroll-view>
 
   <!-- 浮动添加按钮 -->
   <view class="fab" bindtap="onCreateTask">

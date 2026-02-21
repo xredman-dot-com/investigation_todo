@@ -3,6 +3,8 @@
     "features/tasks/pages/list/list",
     "features/tasks/pages/detail/detail",
     "features/tasks/pages/create/create",
+    "features/views/pages/timeline/timeline",
+    "features/views/pages/eisenhower/eisenhower",
     "features/calendar/pages/calendar",
     "features/countdown/pages/index",
     "features/pomodoro/pages/index",

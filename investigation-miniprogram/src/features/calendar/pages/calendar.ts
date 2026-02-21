@@ -66,11 +66,13 @@ Page({
     initPageTheme(this)
     this.initializeDate()
     this.setData({ timeSlots: this.buildTimeSlots() })
+    this.applyMenuSelection()
     this.loadCalendarData()
   },
 
   onShow() {
     initPageTheme(this)
+    this.applyMenuSelection()
     this.loadCalendarData()
   },
 
@@ -94,6 +96,16 @@ Page({
     this.setData({ viewMode: mode, currentDate: this.data.selectedDate }, () => {
       this.loadCalendarData()
     })
+  },
+
+  applyMenuSelection() {
+    const selection = wx.getStorageSync("menu:calendarView")
+    if (!selection) return
+    wx.removeStorageSync("menu:calendarView")
+    const view = selection.view as ViewMode
+    if (view && view !== this.data.viewMode) {
+      this.setData({ viewMode: view, currentDate: this.data.selectedDate })
+    }
   },
 
   // 加载日历数据

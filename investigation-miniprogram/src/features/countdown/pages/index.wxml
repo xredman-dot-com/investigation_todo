@@ -3,7 +3,7 @@
   <status-banner message="正在加载倒数日..." wx:if="{{isLoading}}" />
   <view class="header">
     <view class="header-row">
-      <global-menu inline="{{true}}" />
+      <global-menu inline="{{true}}" context="countdown" />
       <view class="title">倒数日</view>
     </view>
     <view class="subtitle">把重要的日子放在前面</view>
@@ -37,7 +37,7 @@
   <view class="list-section">
     <view class="section-title">我的倒数日</view>
     <view class="countdown-list">
-      <view class="countdown-card {{item.toneClass}}" wx:for="{{items}}" wx:key="id">
+      <view class="countdown-card {{item.toneClass}}" wx:for="{{filteredItems}}" wx:key="id">
         <view class="card-main">
           <view class="card-title">{{item.title}}</view>
           <view class="card-date">{{item.displayDate}}</view>
@@ -54,7 +54,7 @@
         </view>
       </view>
     </view>
-    <view wx:if="{{items.length === 0}}" class="empty-state">
+    <view wx:if="{{filteredItems.length === 0}}" class="empty-state">
       <view class="empty-text">暂无倒数日</view>
       <view class="empty-hint">添加一个重要日期开始吧</view>
     </view>

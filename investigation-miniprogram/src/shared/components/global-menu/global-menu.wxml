@@ -19,7 +19,16 @@
 
     <view class="menu-section" wx:for="{{sections}}" wx:key="title">
       <view class="menu-title">{{item.title}}</view>
-      <view class="menu-item" wx:for="{{item.items}}" wx:for-item="entry" wx:key="label" bindtap="onItemTap" data-url="{{entry.url}}" data-action="{{entry.action}}">
+      <view
+        class="menu-item"
+        wx:for="{{item.items}}"
+        wx:for-item="entry"
+        wx:key="label"
+        bindtap="onItemTap"
+        data-url="{{entry.url}}"
+        data-action="{{entry.action}}"
+        data-payload="{{entry.payload}}"
+      >
         <image class="item-icon" src="{{entry.icon}}" mode="aspectFit" />
         <text class="item-label">{{entry.label}}</text>
       </view>

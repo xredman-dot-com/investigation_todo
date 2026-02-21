@@ -4,7 +4,7 @@
 
   <view class="focus-header">
     <view class="focus-top">
-      <global-menu inline="{{true}}" />
+      <global-menu inline="{{true}}" context="pomodoro" />
       <view class="header-title">专注</view>
     </view>
     <view class="mode-tabs">
