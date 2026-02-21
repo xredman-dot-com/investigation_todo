@@ -2,6 +2,7 @@
 import { setTheme, getTheme, ThemeName, THEMES, Theme } from '../../../core/theme'
 import { settingsStore } from "../../../stores/settings"
 import { initPageTheme } from '../../../core/themeMixin'
+import { getSessionSnapshot } from "../../../core/session"
 
 Page({
   data: {
@@ -58,9 +59,14 @@ Page({
       })
       return
     }
-
-    const userInfo = wx.getStorageSync('userInfo') || { name: '', email: '' }
-    this.setData({ userInfo })
+    const snapshot = getSessionSnapshot()
+    const user = snapshot.user
+    this.setData({
+      userInfo: {
+        name: user?.nickname || (user?.openid ? `用户-${user.openid.slice(-4)}` : "") || "",
+        email: ""
+      }
+    })
   },
 
   onThemeChange(e: WechatMiniprogram.CustomEvent) {

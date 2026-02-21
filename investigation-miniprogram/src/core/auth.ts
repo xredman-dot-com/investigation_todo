@@ -1,13 +1,8 @@
 import { USE_DEV_LOGIN } from "./config"
 import { request } from "./request"
-import { clearToken, getToken, setToken } from "./storage"
-
-export type AuthUser = {
-  id: string
-  openid?: string
-  nickname?: string
-  avatar_url?: string
-}
+import { getToken, setToken } from "./storage"
+import { clearSession, setSessionUser } from "./session"
+import type { AuthUser } from "./authTypes"
 
 async function wxLogin(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -54,26 +49,17 @@ export async function fetchCurrentUser(): Promise<AuthUser> {
 }
 
 export async function ensureAuth(): Promise<void> {
-  console.log("[Auth] ensureAuth start")
   const token = getToken()
-  console.log("[Auth] token cached:", !!token)
   if (token) {
     try {
       const user = await fetchCurrentUser()
       const app = getApp<{ globalData: { user: AuthUser | null; token: string } }>()
       app.globalData.user = user
       app.globalData.token = token
-      const fallbackName = user.nickname || user.openid || user.id
-      wx.setStorageSync("userInfo", {
-        name: fallbackName || "",
-        nickname: user.nickname || "",
-        avatar_url: user.avatar_url || ""
-      })
-      console.log("[Auth] user loaded from token", user)
+      setSessionUser(user, token)
       return
     } catch (error) {
-      console.warn("[Auth] token invalid", error)
-      clearToken()
+      clearSession()
     }
   }
 
@@ -82,11 +68,5 @@ export async function ensureAuth(): Promise<void> {
   const app = getApp<{ globalData: { user: AuthUser | null; token: string } }>()
   app.globalData.user = user
   app.globalData.token = newToken
-  const fallbackName = user.nickname || user.openid || user.id
-  wx.setStorageSync("userInfo", {
-    name: fallbackName || "",
-    nickname: user.nickname || "",
-    avatar_url: user.avatar_url || ""
-  })
-  console.log("[Auth] user loaded via login", user)
+  setSessionUser(user, newToken)
 }

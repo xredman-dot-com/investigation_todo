@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../config"
-import { getToken } from "../storage"
+import { getToken } from "../core/storage"
 import { request } from "../core/request"
 import type { AttachmentItem } from "../types/api"
 
