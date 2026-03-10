@@ -9,7 +9,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e .
 cp .env.example .env
-uvicorn src.main:app --reload --port 8000
+uvicorn src.main:app --reload --port 18432
 ```
 
 ## Migrations

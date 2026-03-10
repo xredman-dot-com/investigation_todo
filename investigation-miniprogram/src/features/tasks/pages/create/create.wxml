@@ -9,48 +9,39 @@
   </view>
 
   <scroll-view class="content" scroll-y>
-    <view class="card">
+    <view class="card title-card">
       <view class="title-row">
         <input class="title-input" value="{{title}}" bindinput="onTitleInput" placeholder="准备做什么？" placeholder-class="title-placeholder" focus="{{true}}" />
+      </view>
+      <view class="quick-grid">
+        <picker mode="date" value="{{dueDate}}" bindchange="onDateChange">
+          <view class="quick-item">
+            <text class="quick-icon">📅</text>
+            <text class="quick-text">{{dueDate || '日期'}}</text>
+          </view>
+        </picker>
+        <picker mode="time" value="{{dueTime}}" bindchange="onTimeChange">
+          <view class="quick-item">
+            <text class="quick-icon">⏰</text>
+            <text class="quick-text">{{dueTime || '时间'}}</text>
+          </view>
+        </picker>
+        <view class="quick-item" bindtap="onSelectList">
+          <text class="quick-icon">📋</text>
+          <text class="quick-text">{{currentList.name}}</text>
+        </view>
+        <view class="quick-item" bindtap="onSelectPriority">
+          <text class="quick-icon">🔴</text>
+          <text class="quick-text">{{priorityLabels[priority]}}</text>
+        </view>
       </view>
     </view>
 
     <view class="card">
-      <view class="field-row" bindtap="onSelectDate">
-        <view class="field-label">📅 截止日期</view>
-        <view class="field-value">{{dueDate || '无'}}</view>
-        <text class="field-arrow">›</text>
-      </view>
-
-      <view class="field-row" bindtap="onSelectTime">
-        <view class="field-label">⏰ 提醒时间</view>
-        <view class="field-value">{{dueTime || '无'}}</view>
-        <text class="field-arrow">›</text>
-      </view>
-
-      <view class="field-row" bindtap="onSelectList">
-        <view class="field-label">📋 清单</view>
-        <view class="field-value">{{currentList.name}}</view>
-        <text class="field-arrow">›</text>
-      </view>
-
-      <view class="field-row" bindtap="onSelectPriority">
-        <view class="field-label">🔴 优先级</view>
-        <view class="priority-badge priority-{{priority}}">
-          <text>{{priorityLabels[priority]}}</text>
-        </view>
-        <text class="field-arrow">›</text>
-      </view>
-
-      <view class="field-row" bindtap="onSelectTags">
-        <view class="field-label">🏷️ 标签</view>
-        <view class="field-value">
-          <text wx:if="{{tags.length === 0}}">无</text>
-          <view class="tag-list" wx:else>
-            <text class="tag-item" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
-          </view>
-        </view>
-        <text class="field-arrow">›</text>
+      <view class="field-title">标签</view>
+      <input class="tag-input" value="{{tagsInput}}" bindinput="onTagsInput" placeholder="输入标签，空格或逗号分隔" />
+      <view class="tag-list" wx:if="{{tags.length > 0}}">
+        <text class="tag-item" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
       </view>
     </view>
 

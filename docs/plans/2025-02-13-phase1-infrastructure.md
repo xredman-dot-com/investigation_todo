@@ -289,7 +289,7 @@ cp .env.example .env
 alembic upgrade head
 
 # 启动开发服务器
-uvicorn src.main:app --reload --port 8000
+uvicorn src.main:app --reload --port 18432
 \`\`\`
 
 ## 测试
@@ -1084,7 +1084,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:18432',
         changeOrigin: true,
       },
     },

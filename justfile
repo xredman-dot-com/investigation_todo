@@ -1,7 +1,7 @@
 default:
   @just --list
 
-backend port="8000":
+backend port="18432":
   cd investigation-backend && if [ ! -x .venv/bin/uvicorn ]; then uv sync; fi
   cd investigation-backend && uv run -m uvicorn src.main:app --reload --port {{port}}
 

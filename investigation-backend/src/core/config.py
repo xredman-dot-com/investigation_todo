@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Investigation"
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = False
+    TESTING: bool = False
     SECRET_KEY: str = Field(..., min_length=32)
 
     API_V1_PREFIX: str = "/api/v1"
@@ -29,7 +30,7 @@ class Settings(BaseSettings):
 
     STORAGE_PROVIDER: str = "local"
     LOCAL_STORAGE_PATH: str = "storage"
-    LOCAL_STORAGE_BASE_URL: str = "http://localhost:8000/media"
+    LOCAL_STORAGE_BASE_URL: str = "http://localhost:18432/media"
     MAX_UPLOAD_SIZE_MB: int = 10
     CORS_ALLOW_ORIGINS: str = (
         "http://localhost:3000,"

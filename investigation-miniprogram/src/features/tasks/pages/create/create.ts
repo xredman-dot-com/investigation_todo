@@ -13,9 +13,10 @@ Page({
     dueTime: '',
     listId: '',
     currentList: { id: '', name: '收件箱' } as ListItem,
-    priority: 4,
+    priority: 3,
     priorityLabels: ['高优先级', '中优先级', '低优先级', '无优先级'],
     tags: [] as string[],
+    tagsInput: "",
     subtasks: [] as Array<{ title: string; completed: boolean }>,
     lists: [] as ListItem[],
     isLoading: false,
@@ -64,32 +65,12 @@ Page({
     this.setData({ meaning: e.detail.value })
   },
 
-  onSelectDate() {
-    const that = this
-    wx.showModal({
-      title: '设置日期',
-      editable: true,
-      placeholderText: '格式：2024-02-13',
-      success: (res) => {
-        if (res.confirm && res.content) {
-          that.setData({ dueDate: res.content })
-        }
-      }
-    })
+  onDateChange(e: WechatMiniprogram.CustomEvent) {
+    this.setData({ dueDate: e.detail.value })
   },
 
-  onSelectTime() {
-    const that = this
-    wx.showModal({
-      title: '设置时间',
-      editable: true,
-      placeholderText: '格式：14:30',
-      success: (res) => {
-        if (res.confirm && res.content) {
-          that.setData({ dueTime: res.content })
-        }
-      }
-    })
+  onTimeChange(e: WechatMiniprogram.CustomEvent) {
+    this.setData({ dueTime: e.detail.value })
   },
 
   onSelectList() {
@@ -117,8 +98,13 @@ Page({
     })
   },
 
-  onSelectTags() {
-    wx.showToast({ title: '标签编辑功能开发中', icon: 'none' })
+  onTagsInput(e: WechatMiniprogram.CustomEvent) {
+    const value = e.detail.value as string
+    const tags = value
+      .split(/[,，\s]+/g)
+      .map((item) => item.trim())
+      .filter(Boolean)
+    this.setData({ tagsInput: value, tags })
   },
 
   onAddSubtask() {
@@ -162,8 +148,8 @@ Page({
         title: this.data.title,
         description: this.data.description,
         meaning: this.data.meaning,
-        due_date: this.data.dueDate,
-        due_time: this.data.dueTime,
+        due_date: this.data.dueDate || undefined,
+        due_time: this.data.dueTime || undefined,
         list_id: this.data.listId,
         priority: this.data.priority,
         tags: this.data.tags,
