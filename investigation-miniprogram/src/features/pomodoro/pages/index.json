@@ -3,7 +3,6 @@
   "enablePullDownRefresh": true,
   "usingComponents": {
     "status-banner": "/shared/components/status-banner/status-banner",
-    "task-selector": "/features/pomodoro/components/task-selector/task-selector",
-    "global-menu": "/shared/components/global-menu/global-menu"
+    "task-selector": "/features/pomodoro/components/task-selector/task-selector"
   }
 }
