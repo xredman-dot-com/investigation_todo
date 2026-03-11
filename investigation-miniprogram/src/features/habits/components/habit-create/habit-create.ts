@@ -1,4 +1,3 @@
-// components/habit-create/habit-create.ts
 Component({
   properties: {
     visible: {
@@ -8,30 +7,26 @@ Component({
   },
 
   data: {
-    name: '',
-    selectedIcon: '💪',
-    icons: ['💪', '📚', '🏃', '🧘', '💧', '🌅', '🎨', '✍️', '🎵', '🍎', '😴', '💊'],
-    frequency: 'daily',
-    reminder: ''
+    name: "",
+    frequency: "daily",
+    targetCount: "1",
+    reminder: ""
   },
 
   methods: {
-    onStopPropagation() {
-      // Prevent event bubbling
-    },
+    onStopPropagation() {},
 
     onNameInput(e: WechatMiniprogram.CustomEvent) {
       this.setData({ name: e.detail.value })
     },
 
-    onSelectIcon(e: WechatMiniprogram.CustomEvent) {
-      const { icon } = e.currentTarget.dataset
-      this.setData({ selectedIcon: icon })
-    },
-
     onSelectFrequency(e: WechatMiniprogram.CustomEvent) {
       const { freq } = e.currentTarget.dataset
       this.setData({ frequency: freq })
+    },
+
+    onTargetCountInput(e: WechatMiniprogram.CustomEvent) {
+      this.setData({ targetCount: e.detail.value })
     },
 
     onReminderInput(e: WechatMiniprogram.CustomEvent) {
@@ -40,32 +35,32 @@ Component({
 
     onCancel() {
       this.resetForm()
-      this.triggerEvent('cancel')
+      this.triggerEvent("cancel")
     },
 
     onConfirm() {
       if (!this.data.name.trim()) {
-        wx.showToast({ title: '请输入习惯名称', icon: 'none' })
+        wx.showToast({ title: "请输入习惯名称", icon: "none" })
         return
       }
 
-      const habit = {
-        name: this.data.name,
-        icon: this.data.selectedIcon,
-        frequency: this.data.frequency,
-        reminder: this.data.reminder
-      }
-
-      this.triggerEvent('confirm', { habit })
+      this.triggerEvent("confirm", {
+        habit: {
+          name: this.data.name.trim(),
+          frequency: this.data.frequency,
+          target_count: Number(this.data.targetCount) || 1,
+          reminder_time: this.data.reminder.trim()
+        }
+      })
       this.resetForm()
     },
 
     resetForm() {
       this.setData({
-        name: '',
-        selectedIcon: '💪',
-        frequency: 'daily',
-        reminder: ''
+        name: "",
+        frequency: "daily",
+        targetCount: "1",
+        reminder: ""
       })
     }
   }

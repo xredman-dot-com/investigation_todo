@@ -5,6 +5,10 @@ export function listHabits(): Promise<HabitItem[]> {
   return request<HabitItem[]>({ url: "/habits/" })
 }
 
+export function getHabit(habitId: string): Promise<HabitItem> {
+  return request<HabitItem>({ url: `/habits/${habitId}` })
+}
+
 export function createHabit(data: Record<string, any>): Promise<HabitItem> {
   return request<HabitItem>({ url: "/habits/", method: "POST", data })
 }

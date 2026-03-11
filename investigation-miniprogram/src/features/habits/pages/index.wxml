@@ -1,81 +1,61 @@
 <view class="page" style="{{themeStyle}}">
   <status-banner type="error" message="{{errorMessage}}" actionText="重试" bind:action="fetchHabits" />
-  <status-banner message="正在加载习惯..." wx:if="{{isLoading}}" />
 
   <view class="habit-header">
-    <view class="habit-top">
-      <global-menu inline="{{true}}" context="habits" />
-      <view class="habit-title">习惯</view>
-    </view>
-    <view class="habit-subtitle">让每日打卡更有仪式感</view>
+    <view class="habit-title">今日习惯</view>
+    <view class="habit-subtitle">{{progress.completed}} / {{progress.total}} · {{progress.summary}}</view>
   </view>
 
-  <view class="summary-strip">
-    <view class="summary-item">
-      <view class="summary-label">习惯</view>
-      <view class="summary-value">{{summary.total}}</view>
+  <view class="section">
+    <view class="section-head">
+      <view class="section-title">今天要做</view>
+      <view class="section-meta">{{pendingHabits.length}}</view>
     </view>
-    <view class="summary-divider"></view>
-    <view class="summary-item">
-      <view class="summary-label">累计</view>
-      <view class="summary-value">{{summary.totalCompleted}}</view>
-    </view>
-    <view class="summary-divider"></view>
-    <view class="summary-item">
-      <view class="summary-label">最长</view>
-      <view class="summary-value">{{summary.maxStreak}}</view>
-    </view>
-  </view>
 
-  <view class="create-card">
-    <view class="create-title">新增习惯</view>
-    <view class="create-row">
-      <input class="input" placeholder="习惯名称" value="{{form.name}}" data-field="name" bindinput="onInputChange" />
-      <input class="input input-small" placeholder="次数" type="number" value="{{form.target_count}}" data-field="target_count" bindinput="onInputChange" />
-    </view>
-    <view class="create-actions">
-      <button class="btn primary" bindtap="addHabit">添加</button>
-    </view>
-  </view>
-
-  <view class="list-section">
-    <view class="section-title">今日打卡</view>
-    <view class="habit-list">
-      <view class="habit-card {{item.toneClass}}" wx:for="{{habits}}" wx:key="id">
+    <view class="habit-list" wx:if="{{pendingHabits.length > 0}}">
+      <view class="habit-card" wx:for="{{pendingHabits}}" wx:key="id" bindtap="onGoDetail" data-id="{{item.id}}">
         <view class="habit-main">
           <view class="habit-name">{{item.name}}</view>
-          <view class="habit-meta">
-            <text>{{item.targetText}}</text>
-            <text>连续 {{item.current_streak}} 天</text>
-            <text>累计 {{item.total_completed}}</text>
-          </view>
-          <view class="habit-reminder">{{item.reminderText}}</view>
+          <view class="habit-meta">{{item.statusText}}</view>
         </view>
-        <view class="habit-actions">
-          <button size="mini" class="btn mini primary" data-id="{{item.id}}" bindtap="checkInHabit">打卡</button>
-          <button size="mini" class="btn mini ghost" data-id="{{item.id}}" bindtap="showLogs">记录</button>
-          <button size="mini" class="btn mini ghost" data-id="{{item.id}}" bindtap="removeHabit">删除</button>
-        </view>
+        <button class="check-btn" catchtap="onCheckIn" data-id="{{item.id}}">打卡</button>
       </view>
     </view>
-    <view wx:if="{{habits.length === 0 && !isLoading && !errorMessage}}" class="empty-state">
-      <view class="empty-text">暂无习惯</view>
-      <view class="empty-hint">先添加一个习惯开始打卡</view>
+
+    <view wx:if="{{pendingHabits.length === 0 && !isLoading}}" class="empty-state">
+      <view class="empty-text">今天没有待完成习惯</view>
+      <view class="empty-hint">创建一个新习惯，或者看看已完成列表。</view>
     </view>
   </view>
 
-  <view class="logs-card">
-    <view class="section-title">打卡记录</view>
-    <view class="logs-subtitle">{{activeHabitName ? activeHabitName : "请选择习惯查看记录"}}</view>
-    <view class="log-list" wx:if="{{logs.length > 0}}">
-      <view class="log-item" wx:for="{{logs}}" wx:key="id">
-        <view class="log-date">{{item.completed_at}}</view>
-        <view class="log-count">次数 {{item.count}}</view>
+  <view class="completed-bar" wx:if="{{completedHabits.length > 0}}" bindtap="onToggleCompleted">
+    <view class="completed-label">已完成 {{completedHabits.length}} 个</view>
+    <view class="completed-toggle">{{showCompleted ? "收起" : "展开"}}</view>
+  </view>
+
+  <view class="section completed-section" wx:if="{{completedHabits.length > 0 && showCompleted}}">
+    <view class="section-head tap-target" bindtap="onToggleCompleted">
+      <view class="section-title">已完成</view>
+      <view class="section-meta">{{completedHabits.length}}</view>
+    </view>
+
+    <view class="habit-list">
+      <view class="habit-card habit-card-completed" wx:for="{{completedHabits}}" wx:key="id" bindtap="onGoDetail" data-id="{{item.id}}">
+        <view class="habit-main">
+          <view class="habit-name">{{item.name}}</view>
+          <view class="habit-meta">{{item.statusText}}</view>
+        </view>
+        <view class="done-badge">已完成</view>
       </view>
     </view>
-    <view wx:if="{{logs.length === 0}}" class="empty-state compact">
-      <view class="empty-text">暂无记录</view>
-      <view class="empty-hint">选择习惯后查看历史打卡</view>
-    </view>
   </view>
+
+  <view wx:if="{{pendingHabits.length === 0 && completedHabits.length === 0 && !isLoading && !errorMessage}}" class="empty-shell">
+    <view class="empty-text">还没有习惯</view>
+    <view class="empty-hint">先添加一个，再回来打卡。</view>
+  </view>
+
+  <view class="fab" bindtap="onOpenCreate">+ 新习惯</view>
+
+  <habit-create visible="{{showCreateModal}}" bind:confirm="onCreateHabit" bind:cancel="onCloseCreate" />
 </view>

@@ -1,7 +1,14 @@
-import { createHabit, createHabitLog, deleteHabit, listHabitLogs, listHabits } from "../services"
-import type { HabitItem, HabitLogItem } from "../model"
+import { createHabit, createHabitLog, listHabitLogs, listHabits } from "../services"
+import type { HabitItem } from "../model"
 import { habitsStore } from "../../../stores/habits"
 import { initPageTheme } from "../../../core/themeMixin"
+
+type HabitCard = HabitItem & {
+  todayCount: number
+  remainingCount: number
+  completedToday: boolean
+  statusText: string
+}
 
 function formatDate(value: Date): string {
   const year = value.getFullYear()
@@ -12,115 +19,176 @@ function formatDate(value: Date): string {
 
 Page({
   data: {
-    habits: [] as HabitItem[],
-    logs: [] as HabitLogItem[],
-    activeHabitId: "",
-    activeHabitName: "",
+    pendingHabits: [] as HabitCard[],
+    completedHabits: [] as HabitCard[],
     isLoading: false,
     errorMessage: "",
-    summary: {
+    showCreateModal: false,
+    showCompleted: false,
+    progress: {
+      completed: 0,
       total: 0,
-      totalCompleted: 0,
-      maxStreak: 0
-    },
-    form: {
-      name: "",
-      target_count: ""
+      summary: "今天先完成一个。"
     }
   },
+
   onShow() {
-    // 初始化主题
     initPageTheme(this)
     this.fetchHabits()
   },
+
   async onPullDownRefresh() {
     await this.fetchHabits(true)
     wx.stopPullDownRefresh()
   },
+
   async fetchHabits(forceRefresh = false) {
     const cached = habitsStore.getState()
     if (!forceRefresh && cached.habits.length) {
-      const normalized = this.normalizeHabits(cached.habits)
-      this.setData({
-        habits: normalized,
-        logs: cached.logs,
-        activeHabitId: cached.activeHabitId || "",
-        summary: this.buildSummary(cached.habits)
-      })
+      await this.applyHabits(cached.habits)
     }
-    habitsStore.setState({ loading: true, error: null })
+
     this.setData({ isLoading: true, errorMessage: "" })
+    habitsStore.setState({ loading: true, error: null })
+
     try {
       const habits = await listHabits()
-      const normalized = this.normalizeHabits(habits)
-      habitsStore.setState({ habits: normalized, loading: false, error: null })
-      this.setData({
-        habits: normalized,
-        summary: this.buildSummary(habits),
-        isLoading: false,
-        errorMessage: ""
-      })
+      habitsStore.setState({ habits, loading: false, error: null })
+      await this.applyHabits(habits)
+      this.setData({ isLoading: false, errorMessage: "" })
     } catch (error) {
-      habitsStore.setState({
-        loading: false,
-        error: error instanceof Error ? error.message : "加载失败",
-      })
-      this.setData({
-        isLoading: false,
-        errorMessage: error instanceof Error ? error.message : "加载失败"
-      })
+      const message = error instanceof Error ? error.message : "加载失败"
+      habitsStore.setState({ loading: false, error: message })
+      this.setData({ isLoading: false, errorMessage: message })
     }
   },
-  onInputChange(event: WechatMiniprogram.Input) {
-    const field = event.currentTarget.dataset.field as string
-    this.setData({ [`form.${field}`]: event.detail.value })
-  },
-  async addHabit() {
-    if (!this.data.form.name) {
-      wx.showToast({ title: "请输入名称", icon: "none" })
-      return
-    }
-    await createHabit({
-      name: this.data.form.name,
-      target_count: this.data.form.target_count ? Number(this.data.form.target_count) : 1
+
+  async applyHabits(habits: HabitItem[]) {
+    const today = formatDate(new Date())
+    const dailyLogs = await Promise.all(
+      habits.map(async (habit) => {
+        try {
+          const logs = await listHabitLogs(habit.id, today, today)
+          return {
+            habitId: habit.id,
+            count: logs.reduce((sum, log) => sum + (log.count || 0), 0)
+          }
+        } catch (error) {
+          return { habitId: habit.id, count: 0 }
+        }
+      })
+    )
+
+    const countMap = dailyLogs.reduce<Record<string, number>>((acc, item) => {
+      acc[item.habitId] = item.count
+      return acc
+    }, {})
+
+    const cards = habits
+      .map((habit) => this.toHabitCard(habit, countMap[habit.id] || 0))
+      .sort((left, right) => {
+        if (left.completedToday !== right.completedToday) {
+          return left.completedToday ? 1 : -1
+        }
+        return right.current_streak - left.current_streak
+      })
+
+    this.setData({
+      pendingHabits: cards.filter((habit) => !habit.completedToday),
+      completedHabits: cards.filter((habit) => habit.completedToday),
+      progress: this.buildProgress(cards)
     })
-    this.setData({ form: { name: "", target_count: "" } })
-    await this.fetchHabits(true)
   },
-  async removeHabit(event: WechatMiniprogram.TouchEvent) {
-    const habitId = event.currentTarget.dataset.id as string
-    await deleteHabit(habitId)
-    await this.fetchHabits(true)
+
+  toHabitCard(habit: HabitItem, todayCount: number): HabitCard {
+    const target = Math.max(habit.target_count || 1, 1)
+    const completedToday = todayCount >= target
+    const remainingCount = Math.max(target - todayCount, 0)
+
+    let statusText = `今天 ${Math.min(todayCount, target)}/${target}`
+    if (completedToday) {
+      statusText = `今日已完成 · 连续 ${habit.current_streak || 0} 天`
+    } else if (todayCount > 0) {
+      statusText = `还差 ${remainingCount} 次 · 今天 ${todayCount}/${target}`
+    } else if ((habit.current_streak || 0) > 0) {
+      statusText = `连续 ${habit.current_streak} 天`
+    }
+
+    return {
+      ...habit,
+      todayCount,
+      remainingCount,
+      completedToday,
+      statusText
+    }
   },
-  async checkInHabit(event: WechatMiniprogram.TouchEvent) {
+
+  buildProgress(habits: HabitCard[]) {
+    const total = habits.length
+    const completed = habits.filter((habit) => habit.completedToday).length
+    let summary = "今天先完成一个。"
+
+    if (total === 0) {
+      summary = "还没有习惯"
+    } else if (completed === total) {
+      summary = "今天已全部完成"
+    } else if (completed > 0) {
+      summary = `还差 ${total - completed} 个`
+    }
+
+    return { completed, total, summary }
+  },
+
+  async onCheckIn(event: WechatMiniprogram.TouchEvent) {
     const habitId = event.currentTarget.dataset.id as string
     const today = formatDate(new Date())
-    await createHabitLog(habitId, { completed_at: today, count: 1 })
-    await this.fetchHabits(true)
+    try {
+      await createHabitLog(habitId, { completed_at: today, count: 1 })
+      wx.showToast({ title: "打卡成功", icon: "success" })
+      await this.fetchHabits(true)
+    } catch (error) {
+      wx.showToast({ title: "打卡失败", icon: "none" })
+    }
   },
-  async showLogs(event: WechatMiniprogram.TouchEvent) {
+
+  onOpenCreate() {
+    this.setData({ showCreateModal: true })
+  },
+
+  onCloseCreate() {
+    this.setData({ showCreateModal: false })
+  },
+
+  async onCreateHabit(event: WechatMiniprogram.CustomEvent) {
+    const habit = event.detail.habit as {
+      name: string
+      frequency: string
+      target_count: number
+      reminder_time?: string
+    }
+
+    try {
+      await createHabit({
+        name: habit.name,
+        frequency: habit.frequency,
+        target_count: habit.target_count,
+        reminder_enabled: Boolean(habit.reminder_time),
+        reminder_time: habit.reminder_time || null
+      })
+      this.setData({ showCreateModal: false })
+      wx.showToast({ title: "创建成功", icon: "success" })
+      await this.fetchHabits(true)
+    } catch (error) {
+      wx.showToast({ title: "创建失败", icon: "none" })
+    }
+  },
+
+  onToggleCompleted() {
+    this.setData({ showCompleted: !this.data.showCompleted })
+  },
+
+  onGoDetail(event: WechatMiniprogram.TouchEvent) {
     const habitId = event.currentTarget.dataset.id as string
-    const logs = await listHabitLogs(habitId)
-    const activeHabit = this.data.habits.find((habit) => habit.id === habitId)
-    this.setData({
-      logs,
-      activeHabitId: habitId,
-      activeHabitName: activeHabit ? activeHabit.name : ""
-    })
-    habitsStore.setState({ logs, activeHabitId: habitId })
-  },
-  buildSummary(habits: HabitItem[]) {
-    const total = habits.length
-    const totalCompleted = habits.reduce((sum, habit) => sum + (habit.total_completed || 0), 0)
-    const maxStreak = habits.reduce((max, habit) => Math.max(max, habit.longest_streak || 0), 0)
-    return { total, totalCompleted, maxStreak }
-  },
-  normalizeHabits(habits: HabitItem[]) {
-    return habits.map((habit) => ({
-      ...habit,
-      targetText: `目标 ${habit.target_count || 1}/天`,
-      reminderText: habit.reminder_time ? `提醒 ${habit.reminder_time}` : "未设置提醒",
-      toneClass: habit.is_positive ? "positive" : "negative"
-    }))
+    wx.navigateTo({ url: `/features/habits/pages/detail/detail?id=${habitId}` })
   }
 })

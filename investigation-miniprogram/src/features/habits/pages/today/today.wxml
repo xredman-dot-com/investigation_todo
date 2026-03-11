@@ -1,0 +1,95 @@
+<view class="page" style="{{themeStyle}}">
+  <!-- 头部 -->
+  <view class="header">
+    <global-menu inline="{{true}}" context="habits" />
+    <view class="title">今日习惯</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{isLoading && habits.length === 0}}">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 习惯列表 -->
+  <view class="habit-list" wx:if="{{habits.length > 0}}">
+    <view 
+      class="habit-card {{item.isCompletedToday ? 'completed' : ''}}" 
+      wx:for="{{habits}}" 
+      wx:key="id"
+      bindtap="onGoDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="habit-info">
+        <view class="habit-name">{{item.name}}</view>
+        <view class="habit-meta" wx:if="{{item.isCompletedToday}}">
+          已连续 {{item.current_streak || 0}} 天
+        </view>
+        <view class="habit-meta" wx:else>
+          目标：{{item.target_count || 1}} 次/天
+        </view>
+      </view>
+      
+      <view class="habit-action" catchtap="onCheckIn" data-id="{{item.id}}" wx:if="{{!item.isCompletedToday}}">
+        <view class="check-btn">打卡</view>
+      </view>
+      
+      <view class="habit-action completed" wx:if="{{item.isCompletedToday}}">
+        <view class="check-icon">✓</view>
+      </view>
+
+      <view class="delete-btn" catchtap="onDelete" data-id="{{item.id}}" data-name="{{item.name}}">
+        <text>删除</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!isLoading && habits.length === 0}}">
+    <view class="empty-icon">📝</view>
+    <view class="empty-text">还没有习惯</view>
+    <view class="empty-hint">添加第一个习惯，开始打卡吧</view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="fab" bindtap="onShowForm">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 添加习惯弹窗 -->
+  <view class="modal" wx:if="{{showForm}}" bindtap="onCloseForm">
+    <view class="modal-content" catchtap="preventBubble">
+      <view class="modal-header">
+        <view class="modal-title">新习惯</view>
+        <view class="modal-close" bindtap="onCloseForm">×</view>
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label">习惯名称</view>
+        <input 
+          class="form-input" 
+          placeholder="例如：早起、阅读" 
+          value="{{formName}}"
+          bindinput="onFormNameChange"
+          focus="{{showForm}}"
+        />
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label">每日目标</view>
+        <input 
+          class="form-input form-input-small" 
+          type="number"
+          placeholder="1"
+          value="{{formTarget}}"
+          bindinput="onFormTargetChange"
+        />
+        <text class="form-unit">次</text>
+      </view>
+      
+      <view class="form-actions">
+        <button class="btn cancel" bindtap="onCloseForm">取消</button>
+        <button class="btn primary" bindtap="onSubmitForm">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -2,7 +2,7 @@
   "navigationBarTitleText": "习惯",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "status-banner": "/shared/components/status-banner/status-banner",
-    "global-menu": "/shared/components/global-menu/global-menu"
+    "habit-create": "/features/habits/components/habit-create/habit-create",
+    "status-banner": "/shared/components/status-banner/status-banner"
   }
 }

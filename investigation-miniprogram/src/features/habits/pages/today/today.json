@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "global-menu": "/components/global-menu/global-menu"
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

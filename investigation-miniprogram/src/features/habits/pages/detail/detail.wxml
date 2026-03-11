@@ -1,32 +1,21 @@
-<!-- pages/habits/detail/detail.wxml -->
 <view class="page" style="{{themeStyle}}">
   <view class="nav-bar">
-    <view class="nav-btn" bindtap="onBack">←</view>
+    <view class="nav-btn" bindtap="onBack">返回</view>
     <view class="nav-title">习惯详情</view>
     <view class="nav-btn" bindtap="onEdit">编辑</view>
   </view>
 
   <scroll-view class="content" scroll-y>
-    <!-- 习惯信息卡片 -->
-    <view class="habit-card card">
-      <view class="habit-header">
-        <view class="habit-icon-large">{{habit.icon}}</view>
-        <view class="habit-info">
-          <view class="habit-name">{{habit.name}}</view>
-          <view class="habit-frequency">
-            <text class="freq-label">频率：</text>
-            <text>{{frequencyLabels[habit.frequency]}}</text>
-          </view>
-        </view>
+    <view class="hero-card" wx:if="{{habit}}">
+      <view class="hero-name">{{habit.name}}</view>
+      <view class="hero-status">{{todayChecked ? "今日已完成" : "今天还未完成"}}</view>
+      <view class="hero-meta">
+        <text>{{frequencyLabels[habit.frequency] || habit.frequency}}</text>
+        <text>目标 {{habit.target_count}} 次</text>
       </view>
     </view>
 
-    <!-- 统计数据 -->
-    <view class="stats-row card">
-      <view class="stat-item">
-        <view class="stat-value">{{habit.total_days || 0}}</view>
-        <view class="stat-label">累计天数</view>
-      </view>
+    <view class="stats-row card" wx:if="{{habit}}">
       <view class="stat-item">
         <view class="stat-value">{{habit.current_streak || 0}}</view>
         <view class="stat-label">当前连续</view>
@@ -35,66 +24,48 @@
         <view class="stat-value">{{habit.longest_streak || 0}}</view>
         <view class="stat-label">最长连续</view>
       </view>
+      <view class="stat-item">
+        <view class="stat-value">{{habit.total_completed || 0}}</view>
+        <view class="stat-label">累计完成</view>
+      </view>
     </view>
 
-    <!-- 月度日历 -->
     <view class="card">
-      <view class="card-title">本月打卡</view>
+      <view class="card-title">本月记录</view>
       <view class="calendar-grid">
-        <view
-          class="calendar-day {{item.checked ? 'checked' : ''}}"
-          wx:for="{{monthlyData}}"
-          wx:key="date"
-        >
+        <view class="calendar-day {{item.checked ? 'checked' : ''}}" wx:for="{{monthlyData}}" wx:key="day">
           <view class="day-number">{{item.day}}</view>
-          <view class="check-mark" wx:if="{{item.checked}}">✓</view>
-        </view>
-      </view>
-
-      <view class="calendar-legend">
-        <view class="legend-item">
-          <view class="legend-dot checked"></view>
-          <text>已打卡</text>
-        </view>
-        <view class="legend-item">
-          <view class="legend-dot"></view>
-          <text>未打卡</text>
         </view>
       </view>
     </view>
 
-    <!-- 打卡历史 -->
     <view class="card">
       <view class="card-title">最近记录</view>
       <view class="history-list" wx:if="{{recentRecords.length > 0}}">
         <view class="history-item" wx:for="{{recentRecords}}" wx:key="id">
           <view class="history-date">{{item.date}}</view>
-          <view class="history-time">{{item.time}}</view>
-          <view class="history-status {{item.checked ? 'done' : 'missed'}}">
-            {{item.checked ? '已完成' : '未完成'}}
-          </view>
+          <view class="history-count">完成 {{item.count}} 次</view>
+          <view class="history-status {{item.checked ? 'done' : 'missed'}}">{{item.checked ? '已完成' : '未完成'}}</view>
         </view>
       </view>
       <view class="empty" wx:else>
-        <text class="empty-icon">📅</text>
         <text class="empty-text">暂无记录</text>
       </view>
     </view>
 
-    <!-- 提醒时间 -->
-    <view class="card" wx:if="{{habit.reminder}}">
-      <view class="card-title">提醒</view>
-      <view class="reminder-info">
-        <text class="reminder-icon">🔔</text>
-        <text class="reminder-time">每日 {{habit.reminder}} 提醒</text>
-      </view>
+    <view class="card" wx:if="{{habit && habit.reminder_enabled && habit.reminder_time}}">
+      <view class="card-title">提醒设置</view>
+      <view class="reminder-time">每日 {{habit.reminder_time}}</view>
+    </view>
+
+    <view class="card danger-card" wx:if="{{habit}}">
+      <view class="card-title">管理</view>
+      <view class="danger-action" bindtap="onDelete">删除习惯</view>
     </view>
   </scroll-view>
 
-  <!-- 底部打卡按钮 -->
-  <view class="bottom-bar">
+  <view class="bottom-bar" wx:if="{{habit}}">
     <view class="checkin-btn {{todayChecked ? 'checked' : ''}}" bindtap="onCheckIn">
-      <text class="checkin-icon">{{todayChecked ? '✓' : '🎯'}}</text>
       <text>{{todayChecked ? '今日已打卡' : '今日打卡'}}</text>
     </view>
   </view>
